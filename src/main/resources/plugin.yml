@@ -1,0 +1,5 @@
+name: ${project.artifactId}
+main: com.mcmiddleearth.mcmemusic.Main
+version: ${project.version}
+author: Gilan
+api-version: 1.16
