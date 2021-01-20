@@ -3,3 +3,8 @@ main: com.mcmiddleearth.mcmemusic.Main
 version: ${project.version}
 author: Gilan
 api-version: 1.16
+
+commands:
+  musicrg:
+    description: Create Music Region
+    usage: /<musicrg>
