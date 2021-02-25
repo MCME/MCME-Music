@@ -3,6 +3,7 @@ main: com.mcmiddleearth.mcmemusic.Main
 version: ${project.version}
 author: Gilan
 api-version: 1.16
+depend: [WorldEdit]
 
 commands:
   musicrg:
