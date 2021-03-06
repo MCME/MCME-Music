@@ -16,29 +16,15 @@
  */
 package com.mcmiddleearth.mcmemusic;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.mcmiddleearth.mcmemusic.commands.MusicRegionCommand;
 import com.mcmiddleearth.mcmemusic.file.JSONFile;
 import com.mcmiddleearth.mcmemusic.util.CreateRegion;
+import com.mcmiddleearth.mcmemusic.util.LoadRegion;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
-import com.sk89q.worldedit.math.BlockVector2;
-import org.apache.commons.lang.ObjectUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Logger;
 
 public class Main extends JavaPlugin {
 
@@ -46,7 +32,9 @@ public class Main extends JavaPlugin {
     public static WorldEditPlugin WEinstance;
 
     JSONFile jsonFile = new JSONFile(this);
+    LoadRegion loadRegion = new LoadRegion(this, jsonFile);
     CreateRegion createRegion = new CreateRegion(this, jsonFile);
+
 
     @Override
     public void onEnable() {
@@ -54,15 +42,13 @@ public class Main extends JavaPlugin {
         this.saveDefaultConfig();
         this.getConfig().options().copyDefaults(true);
 
-        this.getCommand("musicrg").setExecutor(new MusicRegionCommand(createRegion));
+        this.getCommand("musicrg").setExecutor(new MusicRegionCommand(createRegion, loadRegion));
 
         try {
-            String temp = jsonFile.readJson("region1.json").toString();
-            getLogger().info(temp);
+            loadRegion.loadRegion();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.mcmiddleearth.mcmemusic.file;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mcmiddleearth.mcmemusic.Main;
 
@@ -38,7 +39,7 @@ public class JSONFile{
     }
 
     public Object readJson(String filename) throws Exception{
-        FileReader reader = new FileReader(filename);
+        FileReader reader = new FileReader(main.getDataFolder() + File.separator + filename);
         JsonParser jsonParser = new JsonParser();
         return jsonParser.parse(reader);
     }
