@@ -53,6 +53,13 @@ public class MusicRegionCommand implements CommandExecutor {
                 else if(args[0].equalsIgnoreCase("test")){
                     loadRegion.allRegions.forEach((k, v) -> containCheck(p, k, v));
                 }
+                else if(args[0].equalsIgnoreCase("reload")){
+                    try {
+                        loadRegion.loadRegions();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
         return false;

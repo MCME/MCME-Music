@@ -35,7 +35,7 @@ public class LoadRegion {
         this.jsonFile = jsonFile;
     }
 
-    public void loadRegion() throws Exception {
+    public void loadRegions() throws Exception {
         File dataFolder = new File(String.valueOf(main.getDataFolder()));
         File[] files = dataFolder.listFiles();
 
