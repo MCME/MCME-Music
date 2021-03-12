@@ -16,7 +16,13 @@
  */
 package com.mcmiddleearth.mcmemusic;
 
+import com.google.gson.JsonObject;
 import com.mcmiddleearth.mcmemusic.commands.MusicRegionCommand;
+import com.mcmiddleearth.mcmemusic.file.JSONFile;
+import com.mcmiddleearth.mcmemusic.listeners.RegionCheck;
+import com.mcmiddleearth.mcmemusic.util.CreateRegion;
+import com.mcmiddleearth.mcmemusic.util.LoadRegion;
+import com.mcmiddleearth.mcmemusic.util.PlayMusic;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -27,12 +33,33 @@ public class Main extends JavaPlugin {
     public static JavaPlugin instance;
     public static WorldEditPlugin WEinstance;
 
+    private RegionCheck regionCheck;
+
+    JSONFile jsonFile = new JSONFile(this);
+    LoadRegion loadRegion = new LoadRegion(this, jsonFile);
+    CreateRegion createRegion = new CreateRegion(this, jsonFile);
+    PlayMusic playMusic = new PlayMusic(this, regionCheck);
+
+
     @Override
-    public void onEnable(){
+    public void onEnable() {
         instance = this;
         this.saveDefaultConfig();
         this.getConfig().options().copyDefaults(true);
-        this.getCommand("musicrg").setExecutor(new MusicRegionCommand());
+
+        this.getCommand("musicrg").setExecutor(new MusicRegionCommand(createRegion, loadRegion));
+        this.getServer().getPluginManager().registerEvents(new RegionCheck(loadRegion, playMusic), this);
+
+        try {
+            loadRegion.loadRegions();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onDisable(){
+       this.saveConfig();
     }
 
     public static WorldEditPlugin getWorldEdit(){
@@ -44,5 +71,4 @@ public class Main extends JavaPlugin {
     public static JavaPlugin getInstance(){
         return instance;
     }
-
 }
