@@ -17,10 +17,8 @@ public class PlayMusic {
     private Main main;
     private RegionCheck regionCheck;
 
-    public int lastMusic = 0;
+    int lastMusic = 0;
 
-    public String soundFile;
-    public String lastSound;
 
     public PlayMusic(Main main, RegionCheck regionCheck){
         this.main = main;
@@ -28,14 +26,14 @@ public class PlayMusic {
     }
 
     public void playMusic(Integer musicID, Player p){
-        soundFile = main.getConfig().getString(String.valueOf(musicID));
+        String soundFile = main.getConfig().getString(String.valueOf(musicID));
 
         if(musicID != lastMusic) {
 
             p.playSound(p.getLocation(), Sound.valueOf(soundFile), 10, 1);
             p.sendMessage("You are in a region with music ID of " + musicID + "and playing music " + soundFile);
 
-            lastSound = main.getConfig().getString(String.valueOf(lastMusic));
+            String lastSound = main.getConfig().getString(String.valueOf(lastMusic));
             try{
                 p.stopSound(Sound.valueOf(lastSound));
             }catch (NullPointerException e){
@@ -43,13 +41,6 @@ public class PlayMusic {
                 lastMusic = musicID;
             }
             lastMusic = musicID;
-
-            new BukkitRunnable() {
-                @Override
-                public void run () {
-                    lastMusic = 0;
-                }
-            }.runTaskLater(main, 3000);
         }
 
     }

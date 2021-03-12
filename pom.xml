@@ -79,7 +79,8 @@
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
             <version>7.3.0-SNAPSHOT</version>
-            <scope>provided</scope>
+            <scope>system</scope>
+            <systemPath>C:/Users/Brendan/Desktop/Desktop Folders/Servers/1.16.2/plugins/worldedit-bukkit-7.3.0-SNAPSHOT-dist.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
