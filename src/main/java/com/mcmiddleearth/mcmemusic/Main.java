@@ -33,10 +33,12 @@ public class Main extends JavaPlugin {
     public static JavaPlugin instance;
     public static WorldEditPlugin WEinstance;
 
+    private RegionCheck regionCheck;
+
     JSONFile jsonFile = new JSONFile(this);
     LoadRegion loadRegion = new LoadRegion(this, jsonFile);
     CreateRegion createRegion = new CreateRegion(this, jsonFile);
-    PlayMusic playMusic = new PlayMusic(this);
+    PlayMusic playMusic = new PlayMusic(this, regionCheck);
 
 
     @Override
