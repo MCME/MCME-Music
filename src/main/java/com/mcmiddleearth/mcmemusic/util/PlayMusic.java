@@ -28,7 +28,11 @@ public class PlayMusic {
 
         //if(musicID != lastMusic) {
 
-            p.playSound(p.getLocation(), Sound.valueOf(soundFile), 10000, 1);
+            if(soundFile!=null && !soundFile.contains(":")) {
+                p.playSound(p.getLocation(), Sound.valueOf(soundFile), 10000, 1);
+            } else {
+                p.playSound(p.getLocation(), soundFile, 10000, 1);
+            }
             p.sendMessage("You are in a region with music ID of " + musicID + "and playing music " + soundFile);
             musicRegion.addListeningPlayer(p);
 
@@ -48,6 +52,10 @@ public class PlayMusic {
         int musicID = musicRegion.getMusicID();
         String soundFile = main.getConfig().getString(String.valueOf(musicID));
         musicRegion.removeListeningPlayer(p);
-        p.stopSound(Sound.valueOf(soundFile));
+        if(soundFile!=null && !soundFile.contains(":")) {
+            p.stopSound(Sound.valueOf(soundFile));
+        } else {
+            p.stopSound(soundFile);
+        }
     }
 }
