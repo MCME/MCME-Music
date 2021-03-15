@@ -53,7 +53,7 @@ public class MusicRegionCommand implements CommandExecutor {
                     return true;
                 } else if(args[0].equalsIgnoreCase("on")) {
                     Main.getInstance().getPlayerManager().undeafen(p);
-                    p.sendMessage("MCME music disabled.");
+                    p.sendMessage("MCME music enabled.");
                     return true;
                 }
 
