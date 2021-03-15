@@ -3,9 +3,18 @@ main: com.mcmiddleearth.mcmemusic.Main
 version: ${project.version}
 author: Gilan
 api-version: 1.16
+loadbefore: [JukeBox]
 depend: [WorldEdit]
 
 commands:
-  musicrg:
+  music:
     description: Create Music Region
-    usage: /<musicrg>
+    usage: /music create|on|off
+
+permissions:
+  mcmemusic.manage:
+    default: op
+    children:
+      mcmemusic.listen: true
+  mcmemusic.listen:
+    default: op

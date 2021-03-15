@@ -1,8 +1,10 @@
 package com.mcmiddleearth.mcmemusic.commands;
 
+import com.mcmiddleearth.mcmemusic.Main;
+import com.mcmiddleearth.mcmemusic.Permission;
+import com.mcmiddleearth.mcmemusic.data.Region;
 import com.mcmiddleearth.mcmemusic.util.CreateRegion;
 import com.mcmiddleearth.mcmemusic.util.LoadRegion;
-import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Polygonal2DRegion;
 import org.bukkit.Color;
@@ -10,8 +12,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.io.IOException;
 
 public class MusicRegionCommand implements CommandExecutor {
 
@@ -23,14 +23,14 @@ public class MusicRegionCommand implements CommandExecutor {
         this.loadRegion = loadRegion;
     }
 
-    public void containCheck(Player p, Polygonal2DRegion region, Integer musicID){
+    public void containCheck(Player p, Polygonal2DRegion region, Region musicRegion){
         int x, z;
         x = p.getLocation().getBlockX();
         z = p.getLocation().getBlockZ();
         BlockVector3 playerVector = BlockVector3.at(x, 0, z);
 
         if(region.contains(playerVector)){
-            p.sendMessage("You are in a region with music ID of " + musicID);
+            p.sendMessage("You are in a region with music ID of " + musicRegion.getMusicID());
         }
     }
 
@@ -38,20 +38,43 @@ public class MusicRegionCommand implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String s, String[] args) {
         if (sender instanceof Player) {
             Player p = (Player) sender;
-            if (s.equalsIgnoreCase("musicrg")) {
-                if(args.length == 0 || args[0].equalsIgnoreCase("info")){
-                    sender.sendMessage("Command: /musicrg create|delete <name> <musicID>");
+            if (s.equalsIgnoreCase("music")) {
+                //user commands
+                if(!p.hasPermission(Permission.LISTEN.getNode())) {
+                    p.sendMessage("No permission");
+                    return true;
                 }
-                else if(args[0].equalsIgnoreCase("create")){
+                if(args.length == 0 || args[0].equalsIgnoreCase("info")){
+                    sender.sendMessage("Command: /music create|delete <name> <musicID>");
+                    return true;
+                } else if(args[0].equalsIgnoreCase("off")) {
+                    Main.getInstance().getPlayerManager().deafen(p);
+                    p.sendMessage("MCME music disabled.");
+                    return true;
+                } else if(args[0].equalsIgnoreCase("on")) {
+                    Main.getInstance().getPlayerManager().undeafen(p);
+                    p.sendMessage("MCME music disabled.");
+                    return true;
+                }
+
+                //manager commands
+                if(!p.hasPermission(Permission.MANAGE.getNode())) {
+                    p.sendMessage("No permission");
+                    return true;
+                }
+                if(args[0].equalsIgnoreCase("create")){
                     try {
                         createRegion.regionCreate(p, args[1], Integer.parseInt(args[2]));
-                    } catch (IOException e) {
+                        loadRegion.loadRegions();
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                     sender.sendMessage(Color.GREEN + "Region Created.");
+                    return true;
                 }
                 else if(args[0].equalsIgnoreCase("test")){
-                    loadRegion.allRegions.forEach((k, v) -> containCheck(p, k, v));
+                    loadRegion.getRegionsMap().forEach((k, v) -> containCheck(p, k, v));
+                    return true;
                 }
                 else if(args[0].equalsIgnoreCase("reload")){
                     try {
@@ -59,6 +82,7 @@ public class MusicRegionCommand implements CommandExecutor {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    return true;
                 }
             }
         }
