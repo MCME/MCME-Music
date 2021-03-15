@@ -16,10 +16,10 @@
  */
 package com.mcmiddleearth.mcmemusic;
 
-import com.google.gson.JsonObject;
 import com.mcmiddleearth.mcmemusic.commands.MusicRegionCommand;
+import com.mcmiddleearth.mcmemusic.data.PlayerManager;
 import com.mcmiddleearth.mcmemusic.file.JSONFile;
-import com.mcmiddleearth.mcmemusic.listeners.RegionCheck;
+import com.mcmiddleearth.mcmemusic.regionCheck.RegionCheck;
 import com.mcmiddleearth.mcmemusic.util.CreateRegion;
 import com.mcmiddleearth.mcmemusic.util.LoadRegion;
 import com.mcmiddleearth.mcmemusic.util.PlayMusic;
@@ -27,19 +27,19 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 public class Main extends JavaPlugin {
 
-    public static JavaPlugin instance;
+    public static Main instance;
     public static WorldEditPlugin WEinstance;
 
-    private RegionCheck regionCheck;
-
-    JSONFile jsonFile = new JSONFile(this);
-    LoadRegion loadRegion = new LoadRegion(this, jsonFile);
-    CreateRegion createRegion = new CreateRegion(this, jsonFile);
-    PlayMusic playMusic = new PlayMusic(this, regionCheck);
-
+    private JSONFile jsonFile = new JSONFile(this);
+    private LoadRegion loadRegion = new LoadRegion(this, jsonFile);
+    private CreateRegion createRegion = new CreateRegion(this, jsonFile);
+    private PlayMusic playMusic = new PlayMusic(this);//, regionChecker);
+    private PlayerManager playerManager;
+    private BukkitTask regionChecker;
 
     @Override
     public void onEnable() {
@@ -47,19 +47,24 @@ public class Main extends JavaPlugin {
         this.saveDefaultConfig();
         this.getConfig().options().copyDefaults(true);
 
-        this.getCommand("musicrg").setExecutor(new MusicRegionCommand(createRegion, loadRegion));
-        this.getServer().getPluginManager().registerEvents(new RegionCheck(loadRegion, playMusic), this);
+        playerManager = new PlayerManager();
 
         try {
             loadRegion.loadRegions();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        this.getCommand("music").setExecutor(new MusicRegionCommand(createRegion, loadRegion));
+        regionChecker = new RegionCheck(loadRegion, playMusic).runTaskTimer(this,1000,40);
     }
 
     @Override
     public void onDisable(){
-       this.saveConfig();
+        if(regionChecker!=null) {
+            regionChecker.cancel();
+        }
+        this.saveConfig();
     }
 
     public static WorldEditPlugin getWorldEdit(){
@@ -68,7 +73,11 @@ public class Main extends JavaPlugin {
         return WEinstance;
     }
 
-    public static JavaPlugin getInstance(){
+    public static Main getInstance(){
         return instance;
+    }
+
+    public PlayerManager getPlayerManager() {
+        return playerManager;
     }
 }
