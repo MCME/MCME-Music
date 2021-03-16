@@ -48,6 +48,9 @@ public class MusicRegionCommand implements CommandExecutor {
                     sender.sendMessage("Command: /music create|delete <name> <musicID>");
                     return true;
                 } else if(args[0].equalsIgnoreCase("off")) {
+                    Main.getInstance().getLoadRegion().getRegionsMap().forEach((region,musicRegion)-> {
+                        Main.getInstance().getPlayMusic().stopMusic(musicRegion, p);
+                    });
                     Main.getInstance().getPlayerManager().deafen(p);
                     p.sendMessage("MCME music disabled.");
                     return true;
@@ -77,6 +80,7 @@ public class MusicRegionCommand implements CommandExecutor {
                     return true;
                 }
                 else if(args[0].equalsIgnoreCase("reload")){
+                    Main.getInstance().reloadConfig();
                     try {
                         loadRegion.loadRegions();
                     } catch (Exception e) {

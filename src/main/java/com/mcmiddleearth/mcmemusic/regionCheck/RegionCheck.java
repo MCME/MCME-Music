@@ -1,6 +1,7 @@
 package com.mcmiddleearth.mcmemusic.regionCheck;
 
 import com.mcmiddleearth.mcmemusic.Main;
+import com.mcmiddleearth.mcmemusic.Permission;
 import com.mcmiddleearth.mcmemusic.data.Region;
 import com.mcmiddleearth.mcmemusic.util.LoadRegion;
 import com.mcmiddleearth.mcmemusic.util.PlayMusic;
@@ -40,7 +41,8 @@ public class RegionCheck extends BukkitRunnable {
     @Override
     public void run() {
         Bukkit.getOnlinePlayers().stream()
-              .filter(player -> !Main.getInstance().getPlayerManager().isDeafened(player))
+              .filter(player -> player.hasPermission(Permission.LISTEN.getNode())
+                             && !Main.getInstance().getPlayerManager().isDeafened(player))
               .forEach(player -> {
             loadRegion.getRegionsMap().forEach((k,v) -> containCheck(player,k,v));
         });
