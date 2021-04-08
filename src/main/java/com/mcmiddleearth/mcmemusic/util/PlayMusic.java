@@ -34,7 +34,11 @@ public class PlayMusic {
         ConfigurationSection path = main.getConfig().getConfigurationSection(String.valueOf(musicID));
         String soundFile = path.getString("file");
         musicRegion.removeListeningPlayer(p);
-        p.stopSound(Sound.valueOf(soundFile));
+        if(soundFile!=null && !soundFile.contains(":")) {
+            p.stopSound(Sound.valueOf(soundFile));
+        } else {
+            p.stopSound(soundFile);
+        }
     }
 }
 
