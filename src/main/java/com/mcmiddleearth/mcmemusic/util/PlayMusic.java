@@ -23,7 +23,11 @@ public class PlayMusic {
         String name = path.getString("name");
         String link = path.getString("link");
 
-        p.playSound(p.getLocation(), Sound.valueOf(soundFile), 10000, 1);
+        if(soundFile!=null && !soundFile.contains(":")) {
+                p.playSound(p.getLocation(), Sound.valueOf(soundFile), 10000, 1);
+            } else {
+                p.playSound(p.getLocation(), soundFile, 10000, 1);
+            }
         p.sendMessage(ChatColor.GREEN + "Playing " + ChatColor.ITALIC + name + ChatColor.RESET + ChatColor.GREEN + " [" + ChatColor.GRAY + link + ChatColor.GREEN + "]");
         musicRegion.addListeningPlayer(p);
 
