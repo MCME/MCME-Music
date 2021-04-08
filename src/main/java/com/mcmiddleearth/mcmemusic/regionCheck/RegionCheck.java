@@ -65,7 +65,8 @@ public class RegionCheck extends BukkitRunnable {
     @Override
     public void run() {
         Bukkit.getOnlinePlayers().stream()
-              .filter(player -> !Main.getInstance().getPlayerManager().isDeafened(player))
+              .filter(player -> player.hasPermission(Permission.LISTEN.getNode())
+                             && !Main.getInstance().getPlayerManager().isDeafened(player))
               .forEach(player -> {
             loadRegion.getRegionsMap().forEach((k,v) -> containCheck(player,k,v));
         });
