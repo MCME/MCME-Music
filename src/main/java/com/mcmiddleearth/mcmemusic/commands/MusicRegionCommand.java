@@ -55,7 +55,9 @@ public class MusicRegionCommand implements CommandExecutor {
                 }
                 else if(args[0].equalsIgnoreCase("reload")){
                     try {
+                        loadRegion.getRegionsMap().clear();
                         loadRegion.loadRegions();
+                        p.sendMessage(ChatColor.GREEN + "Regions have been reloaded");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
