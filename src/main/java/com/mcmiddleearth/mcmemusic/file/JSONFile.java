@@ -18,7 +18,7 @@ public class JSONFile{
 
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    private Main main;
+    private final Main main;
     List<String> pointLocations = new ArrayList<>();
 
     public JSONFile(Main main){
@@ -29,8 +29,8 @@ public class JSONFile{
         File root = new File(main.getDataFolder() + File.separator + name + ".json");
     }
 
-    public void writeToJSON(String name, List<String> pointLocations, int musicID) throws IOException {
-        Region region = new Region(name, pointLocations, musicID);
+    public void writeToJSON(String name, List<String> pointLocations, int musicID, int weight, String shape) throws IOException {
+        Region region = new Region(name, pointLocations, musicID, weight, shape);
         File root = new File(main.getDataFolder() + File.separator + name + ".json");
         FileWriter fileWriter = new FileWriter(root);
         gson.toJson(region, fileWriter);
