@@ -56,7 +56,7 @@ public class Main extends JavaPlugin {
         }
 
         this.getCommand("music").setExecutor(new MusicRegionCommand(createRegion, loadRegion));
-        regionChecker = new RegionCheck(loadRegion, playMusic).runTaskTimer(this,1000,40);
+        regionChecker = new RegionCheck(loadRegion, playMusic, this).runTaskTimer(this,1000,40);
     }
 
     @Override
