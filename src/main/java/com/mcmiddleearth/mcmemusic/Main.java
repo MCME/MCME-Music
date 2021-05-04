@@ -80,4 +80,12 @@ public class Main extends JavaPlugin {
     public PlayerManager getPlayerManager() {
         return playerManager;
     }
+
+    public PlayMusic getPlayMusic() {
+        return playMusic;
+    }
+
+    public LoadRegion getLoadRegion() {
+        return loadRegion;
+    }
 }

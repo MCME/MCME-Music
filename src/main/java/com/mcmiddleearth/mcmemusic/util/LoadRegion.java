@@ -31,6 +31,7 @@ public class LoadRegion {
     public void loadRegions() throws Exception {
         File dataFolder = new File(String.valueOf(main.getDataFolder()));
         File[] files = dataFolder.listFiles();
+        allRegions.clear();
 
         for(File f: files){
             if(f.getName().contains(".json")){
