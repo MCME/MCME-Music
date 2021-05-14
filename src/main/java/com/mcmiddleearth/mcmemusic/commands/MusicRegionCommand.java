@@ -5,16 +5,22 @@ import com.mcmiddleearth.mcmemusic.Permission;
 import com.mcmiddleearth.mcmemusic.util.CreateRegion;
 import com.mcmiddleearth.mcmemusic.util.LoadRegion;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
 
 public class MusicRegionCommand implements CommandExecutor {
 
     private final CreateRegion createRegion;
     private final LoadRegion loadRegion;
     private final Main main;
+
+    private final HashMap<Player, Integer> playerListening = new HashMap<>();
 
     public MusicRegionCommand(CreateRegion createRegion, LoadRegion loadRegion, Main main){
         this.createRegion = createRegion;

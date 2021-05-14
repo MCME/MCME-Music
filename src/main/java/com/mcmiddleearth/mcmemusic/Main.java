@@ -55,7 +55,7 @@ public class Main extends JavaPlugin {
             e.printStackTrace();
         }
 
-        this.getCommand("music").setExecutor(new MusicRegionCommand(createRegion, loadRegion));
+        this.getCommand("music").setExecutor(new MusicRegionCommand(createRegion, loadRegion, this));
         regionChecker = new RegionCheck(loadRegion, playMusic, this).runTaskTimer(this,1000,40);
     }
 
