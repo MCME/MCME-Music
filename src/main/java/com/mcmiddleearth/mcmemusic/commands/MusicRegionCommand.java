@@ -70,7 +70,6 @@ public class MusicRegionCommand implements CommandExecutor {
                     try{
                         StringBuilder sb = new StringBuilder();
                         for(int i = 1; i < args.length; i++) {
-                            p.sendMessage("- " + i);
                             sb.append(args[i]);
                             sb.append(" ");
                         }
