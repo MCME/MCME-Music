@@ -42,7 +42,11 @@ public class LoadRegion {
                 JsonObject json = (JsonObject) jsonFile.readJson(f.getName());
                 JsonPrimitive jsonID = json.getAsJsonPrimitive("musicID");
                 String name = json.get("name").getAsString();
-                String shape = json.get("shape").getAsString();
+                try{
+                    String shape = json.get("shape").getAsString();
+                }catch(NullPointerException e){
+                    String shape = "poly";
+                }
 
                 int musicID = jsonID.getAsInt();
                 int weight = jsonID.getAsInt();
