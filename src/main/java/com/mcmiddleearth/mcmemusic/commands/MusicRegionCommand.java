@@ -108,8 +108,7 @@ public class MusicRegionCommand implements CommandExecutor {
                         playerListening.put(p, id);
 
                     } catch(NullPointerException e){
-                        p.sendMessage(ChatColor.RED + "That song doesn't exist!");
-                        e.printStackTrace();
+                        p.sendMessage(ChatColor.RED + "That song doesn't exist!");      
                     }
                     return true;
                 }
