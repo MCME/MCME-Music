@@ -19,16 +19,23 @@ public class PlayMusic {
         int musicID = musicRegion.getMusicID();
         ConfigurationSection path = main.getConfig().getConfigurationSection(String.valueOf(musicID));
 
+        String composer;
         String soundFile = path.getString("file");
         String name = path.getString("name");
         String link = path.getString("link");
+        try{
+            composer = path.getString("composer");
+        }catch(NullPointerException e){
+            composer = "Unknown";
+            p.sendMessage("no composer");
+        }
 
         if(soundFile!=null && !soundFile.contains(":")) {
                 p.playSound(p.getLocation(), Sound.valueOf(soundFile), 10000, 1);
             } else {
                 p.playSound(p.getLocation(), soundFile, 10000, 1);
             }
-        p.sendMessage(ChatColor.GREEN + "Playing " + ChatColor.ITALIC + name + ChatColor.RESET + ChatColor.GREEN + " [" + ChatColor.GRAY + link + ChatColor.GREEN + "]");
+        p.sendMessage(ChatColor.GREEN + "Playing " + ChatColor.ITALIC + name + ChatColor.RESET + ChatColor.GREEN + " by " + ChatColor.ITALIC + composer + ChatColor.RESET + ChatColor.GREEN + " [" + ChatColor.GRAY + link + ChatColor.GREEN + "]");
         musicRegion.addListeningPlayer(p);
 
     }
@@ -45,4 +52,3 @@ public class PlayMusic {
         }
     }
 }
-
