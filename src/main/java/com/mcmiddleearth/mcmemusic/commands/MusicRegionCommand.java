@@ -68,8 +68,28 @@ public class MusicRegionCommand implements CommandExecutor {
                         p.sendMessage(ChatColor.GREEN + "Stopped Music.");
                     }
                     try{
-                        ConfigurationSection section = main.getConfig().getConfigurationSection(args[1]);
-                        int id = section.getInt("id");
+                        StringBuilder sb = new StringBuilder();
+                        for(int i = 1; i < args.length; i++) {
+                            p.sendMessage("- " + i);
+                            sb.append(args[i]);
+                            sb.append(" ");
+                        }
+
+                        String command = sb.toString();
+                        command = command.substring(0, command.length() - 1);
+
+                        int id = 0;
+
+                        for(String key : main.getConfig().getConfigurationSection("").getKeys(false)){
+                            if(main.getConfig().getString(key + ".name").equalsIgnoreCase(command)){
+                                id = Integer.parseInt(key);
+                            }
+                        }
+
+                        if(id == 0){
+                            p.sendMessage(ChatColor.RED + "That song doesn't exist");
+                            return true;
+                        }
 
                         ConfigurationSection path = main.getConfig().getConfigurationSection(String.valueOf(id));
 
@@ -88,7 +108,7 @@ public class MusicRegionCommand implements CommandExecutor {
                         playerListening.put(p, id);
 
                     } catch(NullPointerException e){
-                        p.sendMessage(ChatColor.RED + "That song doesn't exist!");
+                        p.sendMessage(ChatColor.RED + "That song doesn't exist!");      
                     }
                     return true;
                 }
@@ -135,6 +155,11 @@ public class MusicRegionCommand implements CommandExecutor {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    return true;
+                }
+                else if(args[0].equalsIgnoreCase("config")){
+                    main.saveConfig();
+                    p.sendMessage(ChatColor.GREEN + "Config has been saved");
                     return true;
                 }
                 sender.sendMessage(ChatColor.RED + "Command: /music on|off|create|delete <name> <music ID> <weight>");
