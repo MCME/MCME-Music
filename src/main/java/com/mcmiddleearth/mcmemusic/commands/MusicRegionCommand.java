@@ -92,22 +92,30 @@ public class MusicRegionCommand implements CommandExecutor {
 
                         ConfigurationSection path = main.getConfig().getConfigurationSection(String.valueOf(id));
 
+                        String composer;
                         String soundFile = path.getString("file");
                         String name = path.getString("name");
                         String link = path.getString("link");
+                        try{
+                            composer = path.getString("composer");
+                        }catch(NullPointerException e){
+                            composer = "Unknown";
+                        }
 
                         if(soundFile!=null && !soundFile.contains(":")) {
                             p.playSound(p.getLocation(), Sound.valueOf(soundFile), 10000, 1);
                         } else {
                             p.playSound(p.getLocation(), soundFile, 10000, 1);
                         }
-                        p.sendMessage(ChatColor.GREEN + "Playing " + ChatColor.ITALIC + name + ChatColor.RESET +
-                                ChatColor.GREEN + " [" + ChatColor.GRAY + link + ChatColor.GREEN + "]");
+
+                        p.sendMessage(ChatColor.GREEN + "Playing " + ChatColor.ITALIC + name + ChatColor.RESET + ChatColor.GREEN + " by " +
+                                ChatColor.ITALIC + composer + ChatColor.RESET + ChatColor.GREEN + " [" + ChatColor.GRAY + link + ChatColor.GREEN + "]");
 
                         playerListening.put(p, id);
 
                     } catch(NullPointerException e){
-                        p.sendMessage(ChatColor.RED + "That song doesn't exist!");      
+                        p.sendMessage(ChatColor.RED + "That song doesn't exist!");
+                        e.printStackTrace();
                     }
                     return true;
                 }
