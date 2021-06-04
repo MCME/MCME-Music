@@ -8,6 +8,8 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void playerQuit(PlayerQuitEvent event) {
-
+        while (ResourceListener.resourceList.contains(event.getPlayer())) {
+            ResourceListener.resourceList.remove(event.getPlayer());
+        }
     }
 }
