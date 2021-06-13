@@ -29,7 +29,6 @@ public class PlayMusic{
             composer = path.getString("composer");
         }catch(NullPointerException e){
             composer = "Unknown";
-            p.sendMessage("no composer");
         }
 
         p.sendMessage(String.valueOf(ResourceListener.resourceList));
@@ -44,8 +43,6 @@ public class PlayMusic{
                 p.playSound(p.getLocation(), soundFile, 10000, 1);
                 musicRegion.addListeningPlayer(p);
                 p.sendMessage(message);
-        }else{
-            p.sendMessage(ChatColor.RED + "No song could be played");
         }
     }
 
