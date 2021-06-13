@@ -59,6 +59,7 @@ public class Main extends JavaPlugin {
 
         this.getCommand("music").setExecutor(new MusicRegionCommand(createRegion, loadRegion, this));
         Bukkit.getServer().getPluginManager().registerEvents(new ResourceListener(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         regionChecker = new RegionCheck(loadRegion, playMusic, this).runTaskTimer(this,1000,40);
     }
 

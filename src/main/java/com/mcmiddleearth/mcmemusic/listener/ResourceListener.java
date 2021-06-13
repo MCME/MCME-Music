@@ -20,6 +20,9 @@ public class ResourceListener implements Listener {
             resourceList.add(p); p.sendMessage("list = " + resourceList);
             p.sendMessage(ChatColor.GREEN + "Loaded Resource Pack");
         }
+        else {
+            e.getPlayer().sendMessage(ChatColor.RED + "Resourcepack is not loading!");
+        }
     }
 
 
