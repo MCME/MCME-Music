@@ -8,17 +8,21 @@ import java.util.Set;
 
 public class Region {
 
-    private String name;
-    private List<String> points;
-    private int musicID;
+    private final String name;
+    private final List<String> points;
+    private final int musicID;
+    private final int weight;
+    private final String shape;
 
-    private Set<Player> listeningPlayers = new HashSet<>();
+    private final Set<Player> listeningPlayers = new HashSet<>();
 
-    public Region(String name, List<String> points, int musicID){
+    public Region(String name, List<String> points, int musicID, int weight, String shape){
         super();
         this.name = name;
         this.points = points;
         this.musicID = musicID;
+        this.weight = weight;
+        this.shape = shape;
     }
 
     public String getName(){
@@ -33,6 +37,14 @@ public class Region {
         return musicID;
     }
 
+    public int getWeight(){
+        return weight;
+    }
+
+    public String getShape(){
+        return shape;
+    }
+
     public boolean isListening(Player player) {
         return listeningPlayers.contains(player);
     }
@@ -45,3 +57,4 @@ public class Region {
         listeningPlayers.remove(player);
     }
 }
+

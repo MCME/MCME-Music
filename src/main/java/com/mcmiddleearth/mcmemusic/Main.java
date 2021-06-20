@@ -19,6 +19,7 @@ package com.mcmiddleearth.mcmemusic;
 import com.mcmiddleearth.mcmemusic.commands.MusicRegionCommand;
 import com.mcmiddleearth.mcmemusic.data.PlayerManager;
 import com.mcmiddleearth.mcmemusic.file.JSONFile;
+import com.mcmiddleearth.mcmemusic.listener.ResourceListener;
 import com.mcmiddleearth.mcmemusic.regionCheck.RegionCheck;
 import com.mcmiddleearth.mcmemusic.util.CreateRegion;
 import com.mcmiddleearth.mcmemusic.util.LoadRegion;
@@ -37,7 +38,8 @@ public class Main extends JavaPlugin {
     private JSONFile jsonFile = new JSONFile(this);
     private LoadRegion loadRegion = new LoadRegion(this, jsonFile);
     private CreateRegion createRegion = new CreateRegion(this, jsonFile);
-    private PlayMusic playMusic = new PlayMusic(this);//, regionChecker);
+    private ResourceListener resourceListener = new ResourceListener();
+    private PlayMusic playMusic = new PlayMusic(this);
     private PlayerManager playerManager;
     private BukkitTask regionChecker;
 
@@ -55,8 +57,10 @@ public class Main extends JavaPlugin {
             e.printStackTrace();
         }
 
-        this.getCommand("music").setExecutor(new MusicRegionCommand(createRegion, loadRegion));
-        regionChecker = new RegionCheck(loadRegion, playMusic).runTaskTimer(this,1000,40);
+        this.getCommand("music").setExecutor(new MusicRegionCommand(createRegion, loadRegion, this));
+        Bukkit.getServer().getPluginManager().registerEvents(new ResourceListener(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        regionChecker = new RegionCheck(loadRegion, playMusic, this).runTaskTimer(this,1000,40);
     }
 
     @Override

@@ -2,36 +2,30 @@ package com.mcmiddleearth.mcmemusic.commands;
 
 import com.mcmiddleearth.mcmemusic.Main;
 import com.mcmiddleearth.mcmemusic.Permission;
-import com.mcmiddleearth.mcmemusic.data.Region;
 import com.mcmiddleearth.mcmemusic.util.CreateRegion;
 import com.mcmiddleearth.mcmemusic.util.LoadRegion;
-import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.regions.Polygonal2DRegion;
-import org.bukkit.Color;
+import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
+
+import java.util.HashMap;
 
 public class MusicRegionCommand implements CommandExecutor {
 
-    private CreateRegion createRegion;
-    private LoadRegion loadRegion;
+    private final CreateRegion createRegion;
+    private final LoadRegion loadRegion;
+    private final Main main;
 
-    public MusicRegionCommand(CreateRegion createRegion, LoadRegion loadRegion){
+    private final HashMap<Player, Integer> playerListening = new HashMap<>();
+
+    public MusicRegionCommand(CreateRegion createRegion, LoadRegion loadRegion, Main main){
         this.createRegion = createRegion;
         this.loadRegion = loadRegion;
-    }
-
-    public void containCheck(Player p, Polygonal2DRegion region, Region musicRegion){
-        int x, z;
-        x = p.getLocation().getBlockX();
-        z = p.getLocation().getBlockZ();
-        BlockVector3 playerVector = BlockVector3.at(x, 0, z);
-
-        if(region.contains(playerVector)){
-            p.sendMessage("You are in a region with music ID of " + musicRegion.getMusicID());
-        }
+        this.main = main;
     }
 
     @Override
@@ -44,19 +38,99 @@ public class MusicRegionCommand implements CommandExecutor {
                     p.sendMessage("No permission");
                     return true;
                 }
+
                 if(args.length == 0 || args[0].equalsIgnoreCase("info")){
-                    sender.sendMessage("Command: /music create|delete <name> <musicID>");
+                    sender.sendMessage(ChatColor.RED + "Command: /music on|off|create|delete <name> <music ID> <weight>");
                     return true;
-                } else if(args[0].equalsIgnoreCase("off")) {
-                    Main.getInstance().getLoadRegion().getRegionsMap().forEach((region,musicRegion)-> {
-                        Main.getInstance().getPlayMusic().stopMusic(musicRegion, p);
-                    });
+                }
+                else if(args[0].equalsIgnoreCase("off")) {
                     Main.getInstance().getPlayerManager().deafen(p);
-                    p.sendMessage("MCME music disabled.");
+                    p.sendMessage(ChatColor.RED + "MCME music disabled.");
                     return true;
-                } else if(args[0].equalsIgnoreCase("on")) {
+                }
+                else if(args[0].equalsIgnoreCase("on")) {
                     Main.getInstance().getPlayerManager().undeafen(p);
-                    p.sendMessage("MCME music enabled.");
+                    p.sendMessage(ChatColor.GREEN + "MCME music enabled.");
+                    return true;
+                }
+                else if(args[0].equalsIgnoreCase("play")){
+                    if(playerListening.containsKey(p)){
+                        int id = playerListening.get(p);
+
+                        ConfigurationSection path = main.getConfig().getConfigurationSection(String.valueOf(id));
+                        String soundFile = path.getString("file");
+                        if(soundFile!=null && !soundFile.contains(":")) {
+                            p.stopSound(Sound.valueOf(soundFile));
+                        } else {
+                            p.stopSound(soundFile);
+                        }
+
+                        p.sendMessage(ChatColor.GREEN + "Stopped Music.");
+                    }
+                    try{
+                        StringBuilder sb = new StringBuilder();
+                        for(int i = 1; i < args.length; i++) {
+                            sb.append(args[i]);
+                            sb.append(" ");
+                        }
+
+                        String command = sb.toString();
+                        command = command.substring(0, command.length() - 1);
+
+                        int id = 0;
+
+                        for(String key : main.getConfig().getConfigurationSection("").getKeys(false)){
+                            if(main.getConfig().getString(key + ".name").equalsIgnoreCase(command)){
+                                id = Integer.parseInt(key);
+                            }
+                        }
+
+                        if(id == 0){
+                            p.sendMessage(ChatColor.RED + "That song doesn't exist");
+                            return true;
+                        }
+
+                        ConfigurationSection path = main.getConfig().getConfigurationSection(String.valueOf(id));
+
+                        String composer;
+                        String soundFile = path.getString("file");
+                        String name = path.getString("name");
+                        String link = path.getString("link");
+                        try{
+                            composer = path.getString("composer");
+                        }catch(NullPointerException e){
+                            composer = "Unknown";
+                        }
+
+                        if(soundFile!=null && !soundFile.contains(":")) {
+                            p.playSound(p.getLocation(), Sound.valueOf(soundFile), 10000, 1);
+                        } else {
+                            p.playSound(p.getLocation(), soundFile, 10000, 1);
+                        }
+
+                        p.sendMessage(ChatColor.GREEN + "Playing " + ChatColor.ITALIC + name + ChatColor.RESET + ChatColor.GREEN + " by " +
+                                ChatColor.ITALIC + composer + ChatColor.RESET + ChatColor.GREEN + " [" + ChatColor.GRAY + link + ChatColor.GREEN + "]");
+
+                        playerListening.put(p, id);
+
+                    } catch(NullPointerException e){
+                        p.sendMessage(ChatColor.RED + "That song doesn't exist!");
+                        e.printStackTrace();
+                    }
+                    return true;
+                }
+                else if(args[0].equalsIgnoreCase("stop")){
+                    int id = playerListening.get(p);
+
+                    ConfigurationSection path = main.getConfig().getConfigurationSection(String.valueOf(id));
+                    String soundFile = path.getString("file");
+                    if(soundFile!=null && !soundFile.contains(":")) {
+                        p.stopSound(Sound.valueOf(soundFile));
+                    } else {
+                        p.stopSound(soundFile);
+                    }
+
+                    p.sendMessage(ChatColor.GREEN + "Stopped Music.");
                     return true;
                 }
 
@@ -65,29 +139,37 @@ public class MusicRegionCommand implements CommandExecutor {
                     p.sendMessage("No permission");
                     return true;
                 }
+
                 if(args[0].equalsIgnoreCase("create")){
                     try {
-                        createRegion.regionCreate(p, args[1], Integer.parseInt(args[2]));
+                        createRegion.regionCreate(p, args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]));
+                        loadRegion.getPolyRegionsMap().clear();
+                        loadRegion.getCubeRegionsMap().clear();
                         loadRegion.loadRegions();
+                        p.sendMessage(ChatColor.GREEN + "Regions have been reloaded");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    sender.sendMessage(Color.GREEN + "Region Created.");
-                    return true;
-                }
-                else if(args[0].equalsIgnoreCase("test")){
-                    loadRegion.getRegionsMap().forEach((k, v) -> containCheck(p, k, v));
+                    sender.sendMessage(ChatColor.GREEN + "Region Created.");
                     return true;
                 }
                 else if(args[0].equalsIgnoreCase("reload")){
-                    Main.getInstance().reloadConfig();
                     try {
+                        loadRegion.getPolyRegionsMap().clear();
+                        loadRegion.getCubeRegionsMap().clear();
                         loadRegion.loadRegions();
+                        p.sendMessage(ChatColor.GREEN + "Regions have been reloaded");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     return true;
                 }
+                else if(args[0].equalsIgnoreCase("config")){
+                    main.saveConfig();
+                    p.sendMessage(ChatColor.GREEN + "Config has been saved");
+                    return true;
+                }
+                sender.sendMessage(ChatColor.RED + "Command: /music on|off|create|delete <name> <music ID> <weight>");
             }
         }
         return false;
