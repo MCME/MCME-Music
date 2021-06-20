@@ -16,6 +16,7 @@ public class ResourceListener implements Listener {
     @EventHandler
     public void onResourcepackStatusEvent(PlayerResourcePackStatusEvent e){
         if(e.getStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED){
+            Player p = e.getPlayer();
             p.sendMessage(ChatColor.GREEN + "Loaded Resource Pack");
         }
         else {
