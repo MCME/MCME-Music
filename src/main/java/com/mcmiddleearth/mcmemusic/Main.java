@@ -19,6 +19,7 @@ package com.mcmiddleearth.mcmemusic;
 import com.mcmiddleearth.mcmemusic.commands.MusicRegionCommand;
 import com.mcmiddleearth.mcmemusic.data.PlayerManager;
 import com.mcmiddleearth.mcmemusic.file.JSONFile;
+import com.mcmiddleearth.mcmemusic.listener.PlayerListener;
 import com.mcmiddleearth.mcmemusic.listener.ResourceListener;
 import com.mcmiddleearth.mcmemusic.regionCheck.RegionCheck;
 import com.mcmiddleearth.mcmemusic.util.CreateRegion;
@@ -47,7 +48,6 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         instance = this;
         this.saveDefaultConfig();
-        this.getConfig().options().copyDefaults(true);
 
         playerManager = new PlayerManager();
 
@@ -68,7 +68,6 @@ public class Main extends JavaPlugin {
         if(regionChecker!=null) {
             regionChecker.cancel();
         }
-        this.saveConfig();
     }
 
     public static WorldEditPlugin getWorldEdit(){

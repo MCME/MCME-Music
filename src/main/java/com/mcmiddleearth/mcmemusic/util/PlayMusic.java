@@ -31,7 +31,6 @@ public class PlayMusic{
             composer = "Unknown";
         }
 
-        p.sendMessage(String.valueOf(ResourceListener.resourceList));
         String message = ChatColor.GREEN + "Playing " + ChatColor.ITALIC + name + ChatColor.RESET + ChatColor.GREEN + " by " + ChatColor.ITALIC + composer + ChatColor.RESET +
                 ChatColor.GREEN + " [" + ChatColor.GRAY + link + ChatColor.GREEN + "]";
 
