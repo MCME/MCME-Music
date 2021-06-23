@@ -11,7 +11,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-
 import java.util.HashMap;
 
 public class MusicRegionCommand implements CommandExecutor {
@@ -158,15 +157,11 @@ public class MusicRegionCommand implements CommandExecutor {
                         loadRegion.getPolyRegionsMap().clear();
                         loadRegion.getCubeRegionsMap().clear();
                         loadRegion.loadRegions();
-                        p.sendMessage(ChatColor.GREEN + "Regions have been reloaded");
+                        main.reloadConfig();
+                        p.sendMessage(ChatColor.GREEN + "Regions and Config have been reloaded");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    return true;
-                }
-                else if(args[0].equalsIgnoreCase("config")){
-                    main.saveConfig();
-                    p.sendMessage(ChatColor.GREEN + "Config has been saved");
                     return true;
                 }
                 sender.sendMessage(ChatColor.RED + "Command: /music on|off|create|delete <name> <music ID> <weight>");
