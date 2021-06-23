@@ -48,6 +48,7 @@ public class Main extends JavaPlugin {
     public void onEnable() {
         instance = this;
         this.saveDefaultConfig();
+        this.getConfig().options().copyDefaults(true);
 
         playerManager = new PlayerManager();
 
