@@ -21,7 +21,7 @@ public class RegionCheck extends BukkitRunnable {
     private final Main main;
 
     int serverTime = 0;
-    HashMap<Player, Integer> playerLoopTime = new HashMap<Player, Integer>();
+    HashMap<Player, Integer> playerLoopTime = new HashMap<>();
 
     public RegionCheck(LoadRegion loadRegion, PlayMusic playMusic, Main main){
         this.loadRegion = loadRegion;
@@ -31,7 +31,6 @@ public class RegionCheck extends BukkitRunnable {
 
     public Region polyContainCheck(Player p, Polygonal2DRegion region, Region musicRegion){
         int x, z;
-        int musicID = musicRegion.getMusicID();
         x = p.getLocation().getBlockX();
         z = p.getLocation().getBlockZ();
         BlockVector3 playerVector = BlockVector3.at(x, 0, z);
@@ -48,7 +47,6 @@ public class RegionCheck extends BukkitRunnable {
 
     public Region cubeContainCheck(Player p, CuboidRegion region, Region musicRegion){
         int x, z, y;
-        int musicID = musicRegion.getMusicID();
         x = p.getLocation().getBlockX();
         y = p.getLocation().getBlockY();
         z = p.getLocation().getBlockZ();
@@ -76,7 +74,7 @@ public class RegionCheck extends BukkitRunnable {
         }
         else{
             try{
-                if(playerLoopTime.get(p).equals(serverTime)){
+                if(playerLoopTime.get(p).equals(serverTime) && Main.getInstance().getPlayerManager().isLooped(p)){
                     playerLoopTime.remove(p);
                     playMusic.stopMusic(musicRegion, p);
                     playMusic.playMusic(musicRegion, p);
@@ -87,9 +85,7 @@ public class RegionCheck extends BukkitRunnable {
             }
         }
 
-        for (int i = 0; i < otherRegions.size(); i++) {
-            Region region = otherRegions.get(i);
-
+        for (Region region : otherRegions) {
             playMusic.stopMusic(region, p);
         }
 
