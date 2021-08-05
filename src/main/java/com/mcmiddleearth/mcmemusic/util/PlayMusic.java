@@ -5,6 +5,7 @@ import com.mcmiddleearth.mcmemusic.data.Region;
 import com.mcmiddleearth.mcmemusic.listener.ResourceListener;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
@@ -35,11 +36,11 @@ public class PlayMusic{
                 ChatColor.GREEN + " [" + ChatColor.GRAY + link + ChatColor.GREEN + "]";
 
         if(soundFile!=null && !soundFile.contains(":") && ResourceListener.resourceList.contains(p)) {
-                p.playSound(p.getLocation(), Sound.valueOf(soundFile), 10000, 1);
+                p.playSound(p.getLocation(), Sound.valueOf(soundFile), SoundCategory.VOICE,1, 1);
                 musicRegion.addListeningPlayer(p);
                 p.sendMessage(message);
         }else if(soundFile!=null && ResourceListener.resourceList.contains(p)){
-                p.playSound(p.getLocation(), soundFile, 10000, 1);
+                p.playSound(p.getLocation(), soundFile, SoundCategory.VOICE,1, 1);
                 musicRegion.addListeningPlayer(p);
                 p.sendMessage(message);
         }
@@ -51,9 +52,9 @@ public class PlayMusic{
         String soundFile = path.getString("file");
         musicRegion.removeListeningPlayer(p);
         if(soundFile!=null && !soundFile.contains(":")) {
-            p.stopSound(Sound.valueOf(soundFile));
+            p.stopSound(Sound.valueOf(soundFile), SoundCategory.VOICE);
         } else {
-            p.stopSound(soundFile);
+            p.stopSound(soundFile, SoundCategory.VOICE);
         }
     }
 }
