@@ -16,7 +16,9 @@
  */
 package com.mcmiddleearth.mcmemusic;
 
+import com.mcmiddleearth.mcmemusic.commands.MusicPlay;
 import com.mcmiddleearth.mcmemusic.commands.MusicRegionCommand;
+import com.mcmiddleearth.mcmemusic.commands.MusicStop;
 import com.mcmiddleearth.mcmemusic.data.PlayerManager;
 import com.mcmiddleearth.mcmemusic.file.JSONFile;
 import com.mcmiddleearth.mcmemusic.listener.PlayerListener;
@@ -41,6 +43,8 @@ public class Main extends JavaPlugin {
     private CreateRegion createRegion = new CreateRegion(this, jsonFile);
     private ResourceListener resourceListener = new ResourceListener();
     private PlayMusic playMusic = new PlayMusic(this);
+    private MusicPlay musicPlay;
+    private MusicStop musicStop;
     private PlayerManager playerManager;
     private BukkitTask regionChecker;
 
