@@ -16,7 +16,7 @@ import java.util.List;
 
 public class JSONFile{
 
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    Gson gson = new GsonBuilder().setLenient().setPrettyPrinting().create();
 
     private final Main main;
     List<String> pointLocations = new ArrayList<>();
