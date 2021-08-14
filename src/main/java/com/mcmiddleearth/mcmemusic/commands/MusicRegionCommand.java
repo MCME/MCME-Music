@@ -39,7 +39,7 @@ public class MusicRegionCommand implements CommandExecutor {
                 }
 
                 if(p.hasPermission(Permission.MANAGE.getNode()) && (args.length == 0 || args[0].equalsIgnoreCase("info"))){
-                    sender.sendMessage(ChatColor.RED + "Command: /music on|off|play <song name>" + ChatColor.GRAY +  " OR " + ChatColor.RED + "/music create <name> <id> <weight> <rp>");
+                    sender.sendMessage(ChatColor.RED + "Command: /music on|off|play <song name>" + ChatColor.GRAY +  " OR " + ChatColor.RED + "/music create <name> <id> <weight>");
                     return true;
                 }
 
@@ -89,15 +89,15 @@ public class MusicRegionCommand implements CommandExecutor {
 
                 if(args[0].equalsIgnoreCase("create")){
                     try {
-                        if(args.length == 5) {
-                            createRegion.regionCreate(p, args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]), args[4]);
+                        if(args.length == 4) {
+                            createRegion.regionCreate(p, args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]));
                             loadRegion.getPolyRegionsMap().clear();
                             loadRegion.getCubeRegionsMap().clear();
                             loadRegion.loadRegions();
                             p.sendMessage(ChatColor.GREEN + "Region Created.");
                             p.sendMessage(ChatColor.GREEN + "Regions have been reloaded");
                         }else{
-                            p.sendMessage(ChatColor.RED + "Please include a name, id, weight, and rp!");
+                            p.sendMessage(ChatColor.RED + "Please include a name, id, and weight!");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();

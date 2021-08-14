@@ -32,7 +32,7 @@ public class CreateRegion {
         this.jsonFile = jsonFile;
     }
 
-    public void regionCreate(Player p, String name, int musicID, int weight, String rp) throws IOException {
+    public void regionCreate(Player p, String name, int musicID, int weight) throws IOException {
 
         Logger log = Bukkit.getLogger();
 
