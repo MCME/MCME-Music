@@ -2,6 +2,7 @@ package com.mcmiddleearth.mcmemusic.regionCheck;
 
 import com.mcmiddleearth.mcmemusic.Main;
 import com.mcmiddleearth.mcmemusic.data.Region;
+import com.mcmiddleearth.mcmemusic.listener.ResourceListener;
 import com.mcmiddleearth.mcmemusic.util.LoadRegion;
 import com.mcmiddleearth.mcmemusic.util.PlayMusic;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -21,7 +22,7 @@ public class RegionCheck extends BukkitRunnable {
     private final Main main;
 
     int serverTime = 0;
-    HashMap<Player, Integer> playerLoopTime = new HashMap<>();
+    private HashMap<Player, Integer> playerLoopTime = new HashMap<>();
 
     public RegionCheck(LoadRegion loadRegion, PlayMusic playMusic, Main main){
         this.loadRegion = loadRegion;
@@ -67,6 +68,8 @@ public class RegionCheck extends BukkitRunnable {
         int musicID = musicRegion.getMusicID();
         ConfigurationSection path = main.getConfig().getConfigurationSection(String.valueOf(musicID));
         int loop = path.getInt("loop");
+
+        ResourceListener.playerRegions.put(p, musicRegion);
 
         if(!musicRegion.isListening(p)) {
             playMusic.playMusic(musicRegion, p);

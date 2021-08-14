@@ -33,26 +33,32 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.util.logging.Logger;
+
 public class Main extends JavaPlugin {
 
     public static Main instance;
     public static WorldEditPlugin WEinstance;
+    private Logger log;
 
-    private JSONFile jsonFile = new JSONFile(this);
-    private LoadRegion loadRegion = new LoadRegion(this, jsonFile);
-    private CreateRegion createRegion = new CreateRegion(this, jsonFile);
-    private ResourceListener resourceListener = new ResourceListener();
-    private PlayMusic playMusic = new PlayMusic(this);
     private MusicPlay musicPlay;
     private MusicStop musicStop;
     private PlayerManager playerManager;
     private BukkitTask regionChecker;
+    private final JSONFile jsonFile = new JSONFile(this);
+    private final PlayMusic playMusic = new PlayMusic(this);
+    private final LoadRegion loadRegion = new LoadRegion(this, jsonFile);
+    private final CreateRegion createRegion = new CreateRegion(this, jsonFile);
+    private final RegionCheck regionCheck = new RegionCheck(loadRegion, playMusic, this);
+    private final ResourceListener resourceListener = new ResourceListener(regionCheck);
 
     @Override
     public void onEnable() {
         instance = this;
         this.saveDefaultConfig();
         this.getConfig().options().copyDefaults(true);
+
+        log = getLogger();
 
         playerManager = new PlayerManager();
 
@@ -63,7 +69,7 @@ public class Main extends JavaPlugin {
         }
 
         this.getCommand("music").setExecutor(new MusicRegionCommand(createRegion, loadRegion, this));
-        Bukkit.getServer().getPluginManager().registerEvents(new ResourceListener(), this);
+        Bukkit.getServer().getPluginManager().registerEvents(new ResourceListener(regionCheck), this);
         Bukkit.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         regionChecker = new RegionCheck(loadRegion, playMusic, this).runTaskTimer(this,1000,40);
     }
