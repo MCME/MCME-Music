@@ -19,7 +19,7 @@ public class MusicRegionCommand implements CommandExecutor {
     private final LoadRegion loadRegion;
     private final Main main;
 
-    private final HashMap<Player, Integer> playerListening = new HashMap<>();
+    public static HashMap<Player, Integer> playerListening = new HashMap<>();
 
     public MusicRegionCommand(CreateRegion createRegion, LoadRegion loadRegion, Main main){
         this.createRegion = createRegion;
@@ -38,10 +38,16 @@ public class MusicRegionCommand implements CommandExecutor {
                     return true;
                 }
 
-                if(args.length == 0 || args[0].equalsIgnoreCase("info")){
-                    sender.sendMessage(ChatColor.RED + "Command: /music on|off|create|delete <name> <music ID> <weight>");
+                if(p.hasPermission(Permission.MANAGE.getNode()) && (args.length == 0 || args[0].equalsIgnoreCase("info"))){
+                    sender.sendMessage(ChatColor.RED + "Command: /music on|off|play <song name>" + ChatColor.GRAY +  " OR " + ChatColor.RED + "/music create <name> <id> <weight>");
                     return true;
                 }
+
+                if(p.hasPermission(Permission.LISTEN.getNode()) && (args.length == 0 || args[0].equalsIgnoreCase("info"))){
+                    sender.sendMessage(ChatColor.RED + "Command: /music on|off|play <song name>");
+                    return true;
+                }
+
                 else if(args[0].equalsIgnoreCase("off")) {
                     Main.getInstance().getPlayerManager().deafen(p);
                     p.sendMessage(ChatColor.RED + "MCME music disabled.");
@@ -52,84 +58,26 @@ public class MusicRegionCommand implements CommandExecutor {
                     p.sendMessage(ChatColor.GREEN + "MCME music enabled.");
                     return true;
                 }
-                else if(args[0].equalsIgnoreCase("play")){
-                    if(playerListening.containsKey(p)){
-                        int id = playerListening.get(p);
-
-                        ConfigurationSection path = main.getConfig().getConfigurationSection(String.valueOf(id));
-                        String soundFile = path.getString("file");
-                        if(soundFile!=null && !soundFile.contains(":")) {
-                            p.stopSound(Sound.valueOf(soundFile));
-                        } else {
-                            p.stopSound(soundFile);
-                        }
-
-                        p.sendMessage(ChatColor.GREEN + "Stopped Music.");
-                    }
-                    try{
-                        StringBuilder sb = new StringBuilder();
-                        for(int i = 1; i < args.length; i++) {
-                            sb.append(args[i]);
-                            sb.append(" ");
-                        }
-
-                        String command = sb.toString();
-                        command = command.substring(0, command.length() - 1);
-
-                        int id = 0;
-
-                        for(String key : main.getConfig().getConfigurationSection("").getKeys(false)){
-                            if(main.getConfig().getString(key + ".name").equalsIgnoreCase(command)){
-                                id = Integer.parseInt(key);
-                            }
-                        }
-
-                        if(id == 0){
-                            p.sendMessage(ChatColor.RED + "That song doesn't exist");
-                            return true;
-                        }
-
-                        ConfigurationSection path = main.getConfig().getConfigurationSection(String.valueOf(id));
-
-                        String composer;
-                        String soundFile = path.getString("file");
-                        String name = path.getString("name");
-                        String link = path.getString("link");
-                        try{
-                            composer = path.getString("composer");
-                        }catch(NullPointerException e){
-                            composer = "Unknown";
-                        }
-
-                        if(soundFile!=null && !soundFile.contains(":")) {
-                            p.playSound(p.getLocation(), Sound.valueOf(soundFile), 10000, 1);
-                        } else {
-                            p.playSound(p.getLocation(), soundFile, 10000, 1);
-                        }
-
-                        p.sendMessage(ChatColor.GREEN + "Playing " + ChatColor.ITALIC + name + ChatColor.RESET + ChatColor.GREEN + " by " +
-                                ChatColor.ITALIC + composer + ChatColor.RESET + ChatColor.GREEN + " [" + ChatColor.GRAY + link + ChatColor.GREEN + "]");
-
-                        playerListening.put(p, id);
-
-                    } catch(NullPointerException e){
-                        p.sendMessage(ChatColor.RED + "That song doesn't exist!");
-                        e.printStackTrace();
+                else if(args[0].equalsIgnoreCase("loop")){
+                    if(Main.getInstance().getPlayerManager().isLooped(p)){
+                        Main.getInstance().getPlayerManager().unloop(p);
+                        p.sendMessage(ChatColor.RED + "MCME music will now not loop.");
+                    }else{
+                        Main.getInstance().getPlayerManager().loop(p);
+                        p.sendMessage(ChatColor.GREEN + "MCME music will now loop.");
                     }
                     return true;
                 }
+                else if(args[0].equalsIgnoreCase("play")){
+                    //MusicPlay instanced here b/c it would not work in constructor
+                    MusicPlay musicPlay = new MusicPlay(main);
+                    musicPlay.play(p, args);
+                    return true;
+                }
                 else if(args[0].equalsIgnoreCase("stop")){
-                    int id = playerListening.get(p);
-
-                    ConfigurationSection path = main.getConfig().getConfigurationSection(String.valueOf(id));
-                    String soundFile = path.getString("file");
-                    if(soundFile!=null && !soundFile.contains(":")) {
-                        p.stopSound(Sound.valueOf(soundFile));
-                    } else {
-                        p.stopSound(soundFile);
-                    }
-
-                    p.sendMessage(ChatColor.GREEN + "Stopped Music.");
+                    //MusicStop instanced here b/c it would not work in constructor
+                    MusicStop musicStop = new MusicStop(main);
+                    musicStop.stop(p);
                     return true;
                 }
 
@@ -141,15 +89,19 @@ public class MusicRegionCommand implements CommandExecutor {
 
                 if(args[0].equalsIgnoreCase("create")){
                     try {
-                        createRegion.regionCreate(p, args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]));
-                        loadRegion.getPolyRegionsMap().clear();
-                        loadRegion.getCubeRegionsMap().clear();
-                        loadRegion.loadRegions();
-                        p.sendMessage(ChatColor.GREEN + "Regions have been reloaded");
+                        if(args.length == 4) {
+                            createRegion.regionCreate(p, args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]));
+                            loadRegion.getPolyRegionsMap().clear();
+                            loadRegion.getCubeRegionsMap().clear();
+                            loadRegion.loadRegions();
+                            p.sendMessage(ChatColor.GREEN + "Region Created.");
+                            p.sendMessage(ChatColor.GREEN + "Regions have been reloaded");
+                        }else{
+                            p.sendMessage(ChatColor.RED + "Please include a name, id, and weight!");
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    sender.sendMessage(ChatColor.GREEN + "Region Created.");
                     return true;
                 }
                 else if(args[0].equalsIgnoreCase("reload")){
@@ -164,7 +116,6 @@ public class MusicRegionCommand implements CommandExecutor {
                     }
                     return true;
                 }
-                sender.sendMessage(ChatColor.RED + "Command: /music on|off|create|delete <name> <music ID> <weight>");
             }
         }
         return false;

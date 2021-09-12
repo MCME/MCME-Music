@@ -1,18 +1,6 @@
-# Example
-#'0':
-#   file: "MUSIC_MUSIC_SONG"
-#   name: "Music Song"
-#   link: "youtube.com"
-#   loop: 100
-
-'2':
-  file: "MUSIC_DISC_PIGSTEP"
-  name: "Pig Step"
-  link: "youtube.com/watch?v=R9eC3WBRKeY"
-  loop: 150
-
 '5':
-  file: "MUSIC_DISC_CAT"
-  name: "Cat"
-  link: "youtube.com/watch?v=zK5ZdzRnQE8"
-  loop: 190
+  file: mcme:rohan
+  name: Rohan
+  link: https://www.youtube.com/watch?v=yIsP9DnnP28
+  loop: 275
+  composer: XXXTristanation

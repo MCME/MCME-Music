@@ -2,14 +2,13 @@ package com.mcmiddleearth.mcmemusic.regionCheck;
 
 import com.mcmiddleearth.mcmemusic.Main;
 import com.mcmiddleearth.mcmemusic.data.Region;
+import com.mcmiddleearth.mcmemusic.listener.ResourceListener;
 import com.mcmiddleearth.mcmemusic.util.LoadRegion;
 import com.mcmiddleearth.mcmemusic.util.PlayMusic;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Polygonal2DRegion;
-import org.apache.commons.lang.ObjectUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -23,7 +22,7 @@ public class RegionCheck extends BukkitRunnable {
     private final Main main;
 
     int serverTime = 0;
-    HashMap<Player, Integer> playerLoopTime = new HashMap<Player, Integer>();
+    private HashMap<Player, Integer> playerLoopTime = new HashMap<>();
 
     public RegionCheck(LoadRegion loadRegion, PlayMusic playMusic, Main main){
         this.loadRegion = loadRegion;
@@ -33,7 +32,6 @@ public class RegionCheck extends BukkitRunnable {
 
     public Region polyContainCheck(Player p, Polygonal2DRegion region, Region musicRegion){
         int x, z;
-        int musicID = musicRegion.getMusicID();
         x = p.getLocation().getBlockX();
         z = p.getLocation().getBlockZ();
         BlockVector3 playerVector = BlockVector3.at(x, 0, z);
@@ -50,7 +48,6 @@ public class RegionCheck extends BukkitRunnable {
 
     public Region cubeContainCheck(Player p, CuboidRegion region, Region musicRegion){
         int x, z, y;
-        int musicID = musicRegion.getMusicID();
         x = p.getLocation().getBlockX();
         y = p.getLocation().getBlockY();
         z = p.getLocation().getBlockZ();
@@ -72,13 +69,15 @@ public class RegionCheck extends BukkitRunnable {
         ConfigurationSection path = main.getConfig().getConfigurationSection(String.valueOf(musicID));
         int loop = path.getInt("loop");
 
+        ResourceListener.playerRegions.put(p, musicRegion);
+
         if(!musicRegion.isListening(p)) {
             playMusic.playMusic(musicRegion, p);
             playerLoopTime.put(p, serverTime + (loop/2));
         }
         else{
             try{
-                if(playerLoopTime.get(p).equals(serverTime)){
+                if(playerLoopTime.get(p).equals(serverTime) && Main.getInstance().getPlayerManager().isLooped(p)){
                     playerLoopTime.remove(p);
                     playMusic.stopMusic(musicRegion, p);
                     playMusic.playMusic(musicRegion, p);
@@ -89,9 +88,7 @@ public class RegionCheck extends BukkitRunnable {
             }
         }
 
-        for (int i = 0; i < otherRegions.size(); i++) {
-            Region region = otherRegions.get(i);
-
+        for (Region region : otherRegions) {
             playMusic.stopMusic(region, p);
         }
 
