@@ -3,5 +3,4 @@ version: '${version}'
 main: com.mcmiddleearth.mcmemusic.Main
 author: Gilan
 api-version: '1.21'
-loadbefore: [ JukeBox ]
 depend: [ WorldEdit, WorldGuard ]
