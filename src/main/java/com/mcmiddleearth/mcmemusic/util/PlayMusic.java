@@ -9,8 +9,7 @@ import org.bukkit.SoundCategory;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
-
-public class PlayMusic{
+public class PlayMusic {
 
     private Main main;
 
@@ -18,7 +17,7 @@ public class PlayMusic{
         this.main = main;
     }
 
-    public void playMusic(Region musicRegion, Player p){
+    public void playMusic(Region musicRegion, Player p) {
         int musicID = musicRegion.getMusicID();
         ConfigurationSection path = main.getConfig().getConfigurationSection(String.valueOf(musicID));
 
@@ -26,23 +25,24 @@ public class PlayMusic{
         String soundFile = path.getString("file");
         String name = path.getString("name");
         String link = path.getString("link");
-        try{
+        try {
             composer = path.getString("composer");
-        }catch(NullPointerException e){
+        } catch (NullPointerException e) {
             composer = "Unknown";
         }
 
-        String message = ChatColor.GREEN + "Playing " + ChatColor.ITALIC + name + ChatColor.RESET + ChatColor.GREEN + " by " + ChatColor.ITALIC + composer + ChatColor.RESET +
-                ChatColor.GREEN + " [" + ChatColor.GRAY + link + ChatColor.GREEN + "]";
+        String message = ChatColor.GREEN + "Playing " + ChatColor.ITALIC + name + ChatColor.RESET + ChatColor.GREEN
+                + " by " + ChatColor.ITALIC + composer + ChatColor.RESET + ChatColor.GREEN + " [" + ChatColor.GRAY
+                + link + ChatColor.GREEN + "]";
 
         musicRegion.addListeningPlayer(p);
 
-        if(soundFile!=null && !soundFile.contains(":") && ResourceListener.resourceList.contains(p)) {
-                p.playSound(p.getLocation(), Sound.valueOf(soundFile), SoundCategory.VOICE,1, 1);
-                p.sendMessage(message);
-        }else if(soundFile!=null && ResourceListener.resourceList.contains(p)){
-                p.playSound(p.getLocation(), soundFile, SoundCategory.VOICE,1, 1);
-                p.sendMessage(message);
+        if (soundFile != null && !soundFile.contains(":") && ResourceListener.resourceList.contains(p)) {
+            p.playSound(p.getLocation(), Sound.valueOf(soundFile), SoundCategory.VOICE, 1, 1);
+            p.sendMessage(message);
+        } else if (soundFile != null && ResourceListener.resourceList.contains(p)) {
+            p.playSound(p.getLocation(), soundFile, SoundCategory.VOICE, 1, 1);
+            p.sendMessage(message);
         }
     }
 
@@ -50,7 +50,7 @@ public class PlayMusic{
         int musicID = musicRegion.getMusicID();
         ConfigurationSection path = main.getConfig().getConfigurationSection(String.valueOf(musicID));
         String soundFile = path.getString("file");
-        if(soundFile!=null && !soundFile.contains(":")) {
+        if (soundFile != null && !soundFile.contains(":")) {
             p.stopSound(Sound.valueOf(soundFile), SoundCategory.VOICE);
         } else {
             p.stopSound(soundFile, SoundCategory.VOICE);

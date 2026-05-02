@@ -1,26 +1,20 @@
 package com.mcmiddleearth.mcmemusic.util;
 
-
 import com.mcmiddleearth.mcmemusic.Main;
 import com.mcmiddleearth.mcmemusic.file.JSONFile;
-
 import com.sk89q.worldedit.IncompleteRegionException;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector2;
-
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Polygonal2DRegion;
 import com.sk89q.worldedit.regions.Region;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.entity.Player;
-
-
 import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
-
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
 
 public class CreateRegion {
 
@@ -60,11 +54,11 @@ public class CreateRegion {
                     int x = point.x();
                     int z = point.z();
                     Location loc = new Location(p.getWorld(), x, maxY, z);
-                    String stringLoc = loc.getWorld().getName() + ":" + loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
+                    String stringLoc = loc.getWorld().getName() + ":" + loc.getBlockX() + ":" + loc.getBlockY() + ":"
+                            + loc.getBlockZ();
                     pointLocations.add(stringLoc);
                 }
-            }
-            else if (sel instanceof CuboidRegion) {
+            } else if (sel instanceof CuboidRegion) {
                 CuboidRegion cube = (CuboidRegion) sel;
                 shape = "cube";
 
@@ -76,25 +70,25 @@ public class CreateRegion {
                 int z1 = pos1.z();
 
                 Location loc1 = new Location(p.getWorld(), x1, y1, z1);
-                String stringLoc1 = loc1.getWorld().getName() + ":" + loc1.getBlockX() + ":" + loc1.getBlockY() + ":" + loc1.getBlockZ();
+                String stringLoc1 = loc1.getWorld().getName() + ":" + loc1.getBlockX() + ":" + loc1.getBlockY() + ":"
+                        + loc1.getBlockZ();
 
                 int x2 = pos2.x();
                 int y2 = pos2.y();
                 int z2 = pos2.z();
 
                 Location loc2 = new Location(p.getWorld(), x2, y2, z2);
-                String stringLoc2 = loc2.getWorld().getName() + ":" + loc2.getBlockX() + ":" + loc2.getBlockY() + ":" + loc2.getBlockZ();
+                String stringLoc2 = loc2.getWorld().getName() + ":" + loc2.getBlockX() + ":" + loc2.getBlockY() + ":"
+                        + loc2.getBlockZ();
 
                 pointLocations.add(stringLoc1);
                 pointLocations.add(stringLoc2);
-
             }
 
-            if(sel instanceof CuboidRegion || sel instanceof Polygonal2DRegion){
+            if (sel instanceof CuboidRegion || sel instanceof Polygonal2DRegion) {
                 jsonFile.saveJSON(name);
                 jsonFile.writeToJSON(name, pointLocations, musicID, weight, shape);
             }
-
         }
     }
 }

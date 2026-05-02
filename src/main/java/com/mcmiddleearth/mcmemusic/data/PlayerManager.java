@@ -1,24 +1,22 @@
 package com.mcmiddleearth.mcmemusic.data;
 
 import com.mcmiddleearth.mcmemusic.Main;
-import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-
 import java.io.*;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
+import org.bukkit.entity.Player;
 
 public class PlayerManager {
 
     private Set<UUID> deafenedPlayers = new HashSet<>();
 
-    private File deafenedPlayersFile = new File(Main.getInstance().getDataFolder(),"deafenedPlayers.dat");
+    private File deafenedPlayersFile = new File(Main.getInstance().getDataFolder(), "deafenedPlayers.dat");
 
     private Set<UUID> loopedPlayers = new HashSet<>();
 
-    private File loopedPlayersFile = new File(Main.getInstance().getDataFolder(),"loopedPlayers.dat");
+    private File loopedPlayersFile = new File(Main.getInstance().getDataFolder(), "loopedPlayers.dat");
 
     public PlayerManager() {
         loadDeafenedPlayers();
@@ -28,6 +26,7 @@ public class PlayerManager {
     public boolean isDeafened(Player player) {
         return deafenedPlayers.contains(player.getUniqueId());
     }
+
     public boolean isLooped(Player player) {
         return loopedPlayers.contains(player.getUniqueId());
     }
@@ -42,18 +41,18 @@ public class PlayerManager {
         saveDeafenedPlayers();
     }
 
-    public void loop(Player player){
+    public void loop(Player player) {
         loopedPlayers.add(player.getUniqueId());
         saveLoopedPlayers();
     }
 
-    public void unloop(Player player){
+    public void unloop(Player player) {
         loopedPlayers.remove(player.getUniqueId());
         saveLoopedPlayers();
     }
 
     private void loadDeafenedPlayers() {
-        if(deafenedPlayersFile.exists()) {
+        if (deafenedPlayersFile.exists()) {
             try (Scanner scanner = new Scanner(deafenedPlayersFile)) {
                 while (scanner.hasNext()) {
                     deafenedPlayers.add(UUID.fromString(scanner.nextLine()));
@@ -65,7 +64,7 @@ public class PlayerManager {
     }
 
     private void saveDeafenedPlayers() {
-        try(PrintWriter writer = new PrintWriter(new FileWriter(deafenedPlayersFile))) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(deafenedPlayersFile))) {
             deafenedPlayers.forEach(player -> writer.println(player.toString()));
         } catch (IOException e) {
             e.printStackTrace();
@@ -73,7 +72,7 @@ public class PlayerManager {
     }
 
     private void loadLoopedPlayers() {
-        if(loopedPlayersFile.exists()) {
+        if (loopedPlayersFile.exists()) {
             try (Scanner scanner = new Scanner(loopedPlayersFile)) {
                 while (scanner.hasNext()) {
                     loopedPlayers.add(UUID.fromString(scanner.nextLine()));
@@ -85,7 +84,7 @@ public class PlayerManager {
     }
 
     private void saveLoopedPlayers() {
-        try(PrintWriter writer = new PrintWriter(new FileWriter(loopedPlayersFile))) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(loopedPlayersFile))) {
             loopedPlayers.forEach(player -> writer.println(player.toString()));
         } catch (IOException e) {
             e.printStackTrace();

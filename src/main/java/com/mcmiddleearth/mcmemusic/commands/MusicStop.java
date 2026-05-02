@@ -11,23 +11,23 @@ public class MusicStop {
 
     private final Main main;
 
-    public MusicStop(Main main){
+    public MusicStop(Main main) {
         this.main = main;
     }
 
-    public void stop(Player p){
+    public void stop(Player p) {
         int id;
 
-        try{
+        try {
             id = MusicRegionCommand.playerListening.get(p);
-        } catch(NullPointerException e){
+        } catch (NullPointerException e) {
             p.sendMessage(ChatColor.RED + "You are not listening to any music!");
             return;
         }
 
         ConfigurationSection path = main.getConfig().getConfigurationSection(String.valueOf(id));
         String soundFile = path.getString("file");
-        if(soundFile!=null && !soundFile.contains(":")) {
+        if (soundFile != null && !soundFile.contains(":")) {
             p.stopSound(Sound.valueOf(soundFile), SoundCategory.VOICE);
         } else {
             p.stopSound(soundFile, SoundCategory.VOICE);
@@ -35,5 +35,4 @@ public class MusicStop {
 
         p.sendMessage(ChatColor.GREEN + "Stopped Music.");
     }
-
 }

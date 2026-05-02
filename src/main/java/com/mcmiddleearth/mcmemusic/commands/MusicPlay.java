@@ -11,23 +11,23 @@ public class MusicPlay {
 
     private Main main;
 
-    public MusicPlay(Main main){
+    public MusicPlay(Main main) {
         this.main = main;
     }
 
-        public void play(Player p, String[] args){
+    public void play(Player p, String[] args) {
 
-        if(args.length < 2){
+        if (args.length < 2) {
             p.sendMessage(ChatColor.RED + "Make sure to include a song name!");
             return;
         }
 
-        if(MusicRegionCommand.playerListening.containsKey(p)){
+        if (MusicRegionCommand.playerListening.containsKey(p)) {
             int id = MusicRegionCommand.playerListening.get(p);
 
             ConfigurationSection path = main.getConfig().getConfigurationSection(String.valueOf(id));
             String soundFile = path.getString("file");
-            if(soundFile!=null && !soundFile.contains(":")) {
+            if (soundFile != null && !soundFile.contains(":")) {
                 p.stopSound(Sound.valueOf(soundFile), SoundCategory.VOICE);
             } else {
                 p.stopSound(soundFile, SoundCategory.VOICE);
@@ -36,9 +36,9 @@ public class MusicPlay {
             p.sendMessage(ChatColor.GREEN + "Stopped Music.");
         }
 
-        try{
+        try {
             StringBuilder sb = new StringBuilder();
-            for(int i = 1; i < args.length; i++) {
+            for (int i = 1; i < args.length; i++) {
                 sb.append(args[i]);
                 sb.append(" ");
             }
@@ -48,13 +48,13 @@ public class MusicPlay {
 
             int id = 0;
 
-            for(String key : main.getConfig().getConfigurationSection("").getKeys(false)){
-                if(main.getConfig().getString(key + ".name").equalsIgnoreCase(command)){
+            for (String key : main.getConfig().getConfigurationSection("").getKeys(false)) {
+                if (main.getConfig().getString(key + ".name").equalsIgnoreCase(command)) {
                     id = Integer.parseInt(key);
                 }
             }
 
-            if(id == 0){
+            if (id == 0) {
                 p.sendMessage(ChatColor.RED + "That song doesn't exist");
                 return;
             }
@@ -65,26 +65,26 @@ public class MusicPlay {
             String soundFile = path.getString("file");
             String name = path.getString("name");
             String link = path.getString("link");
-            try{
+            try {
                 composer = path.getString("composer");
-            }catch(NullPointerException e){
+            } catch (NullPointerException e) {
                 composer = "Unknown";
             }
 
-            if(soundFile!=null && !soundFile.contains(":")) {
+            if (soundFile != null && !soundFile.contains(":")) {
                 p.playSound(p.getLocation(), Sound.valueOf(soundFile), SoundCategory.VOICE, 1, 1);
             } else {
-                p.playSound(p.getLocation(), soundFile, SoundCategory.VOICE,1, 1);
+                p.playSound(p.getLocation(), soundFile, SoundCategory.VOICE, 1, 1);
             }
 
-            p.sendMessage(ChatColor.GREEN + "Playing " + ChatColor.ITALIC + name + ChatColor.RESET + ChatColor.GREEN + " by " +
-                    ChatColor.ITALIC + composer + ChatColor.RESET + ChatColor.GREEN + " [" + ChatColor.GRAY + link + ChatColor.GREEN + "]");
+            p.sendMessage(ChatColor.GREEN + "Playing " + ChatColor.ITALIC + name + ChatColor.RESET + ChatColor.GREEN
+                    + " by " + ChatColor.ITALIC + composer + ChatColor.RESET + ChatColor.GREEN + " [" + ChatColor.GRAY
+                    + link + ChatColor.GREEN + "]");
 
             MusicRegionCommand.playerListening.put(p, id);
 
-        } catch(NullPointerException e){
+        } catch (NullPointerException e) {
             p.sendMessage(ChatColor.RED + "That song doesn't exist!");
         }
     }
-
 }

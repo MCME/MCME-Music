@@ -1,6 +1,7 @@
 plugins {
     java
     id("xyz.jpenilla.run-paper") version "3.0.2"
+    id("com.diffplug.spotless") version "8.4.0"
 }
 
 repositories {
@@ -36,5 +37,11 @@ tasks {
         filesMatching("plugin.yml") {
             expand(props)
         }
+    }
+}
+
+spotless {
+    java {
+        palantirJavaFormat()
     }
 }

@@ -28,12 +28,11 @@ import com.mcmiddleearth.mcmemusic.util.CreateRegion;
 import com.mcmiddleearth.mcmemusic.util.LoadRegion;
 import com.mcmiddleearth.mcmemusic.util.PlayMusic;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.util.logging.Logger;
 
 public class Main extends JavaPlugin {
 
@@ -71,23 +70,23 @@ public class Main extends JavaPlugin {
         this.getCommand("music").setExecutor(new MusicRegionCommand(createRegion, loadRegion, this));
         Bukkit.getServer().getPluginManager().registerEvents(new ResourceListener(regionCheck), this);
         Bukkit.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
-        regionChecker = new RegionCheck(loadRegion, playMusic, this).runTaskTimer(this,1000,40);
+        regionChecker = new RegionCheck(loadRegion, playMusic, this).runTaskTimer(this, 1000, 40);
     }
 
     @Override
-    public void onDisable(){
-        if(regionChecker!=null) {
+    public void onDisable() {
+        if (regionChecker != null) {
             regionChecker.cancel();
         }
     }
 
-    public static WorldEditPlugin getWorldEdit(){
+    public static WorldEditPlugin getWorldEdit() {
         Plugin p = Bukkit.getServer().getPluginManager().getPlugin("WorldEdit");
-        if(p instanceof WorldEditPlugin) return (WorldEditPlugin)p;
+        if (p instanceof WorldEditPlugin) return (WorldEditPlugin) p;
         return WEinstance;
     }
 
-    public static Main getInstance(){
+    public static Main getInstance() {
         return instance;
     }
 

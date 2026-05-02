@@ -4,14 +4,12 @@ import com.mcmiddleearth.mcmemusic.Main;
 import com.mcmiddleearth.mcmemusic.Permission;
 import com.mcmiddleearth.mcmemusic.util.CreateRegion;
 import com.mcmiddleearth.mcmemusic.util.LoadRegion;
+import java.util.HashMap;
 import org.bukkit.ChatColor;
-import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-import java.util.HashMap;
 
 public class MusicRegionCommand implements CommandExecutor {
 
@@ -21,7 +19,7 @@ public class MusicRegionCommand implements CommandExecutor {
 
     public static HashMap<Player, Integer> playerListening = new HashMap<>();
 
-    public MusicRegionCommand(CreateRegion createRegion, LoadRegion loadRegion, Main main){
+    public MusicRegionCommand(CreateRegion createRegion, LoadRegion loadRegion, Main main) {
         this.createRegion = createRegion;
         this.loadRegion = loadRegion;
         this.main = main;
@@ -32,79 +30,75 @@ public class MusicRegionCommand implements CommandExecutor {
         if (sender instanceof Player) {
             Player p = (Player) sender;
             if (s.equalsIgnoreCase("music")) {
-                //user commands
-                if(!p.hasPermission(Permission.LISTEN.getNode())) {
+                // user commands
+                if (!p.hasPermission(Permission.LISTEN.getNode())) {
                     p.sendMessage("No permission");
                     return true;
                 }
 
-                if(p.hasPermission(Permission.MANAGE.getNode()) && (args.length == 0 || args[0].equalsIgnoreCase("info"))){
-                    sender.sendMessage(ChatColor.RED + "Command: /music on|off|play <song name>" + ChatColor.GRAY +  " OR " + ChatColor.RED + "/music create <name> <id> <weight>");
+                if (p.hasPermission(Permission.MANAGE.getNode())
+                        && (args.length == 0 || args[0].equalsIgnoreCase("info"))) {
+                    sender.sendMessage(ChatColor.RED + "Command: /music on|off|play <song name>" + ChatColor.GRAY
+                            + " OR " + ChatColor.RED + "/music create <name> <id> <weight>");
                     return true;
                 }
 
-                if(p.hasPermission(Permission.LISTEN.getNode()) && (args.length == 0 || args[0].equalsIgnoreCase("info"))){
+                if (p.hasPermission(Permission.LISTEN.getNode())
+                        && (args.length == 0 || args[0].equalsIgnoreCase("info"))) {
                     sender.sendMessage(ChatColor.RED + "Command: /music on|off|play <song name>");
                     return true;
-                }
-
-                else if(args[0].equalsIgnoreCase("off")) {
+                } else if (args[0].equalsIgnoreCase("off")) {
                     Main.getInstance().getPlayerManager().deafen(p);
                     p.sendMessage(ChatColor.RED + "MCME music disabled.");
                     return true;
-                }
-                else if(args[0].equalsIgnoreCase("on")) {
+                } else if (args[0].equalsIgnoreCase("on")) {
                     Main.getInstance().getPlayerManager().undeafen(p);
                     p.sendMessage(ChatColor.GREEN + "MCME music enabled.");
                     return true;
-                }
-                else if(args[0].equalsIgnoreCase("loop")){
-                    if(Main.getInstance().getPlayerManager().isLooped(p)){
+                } else if (args[0].equalsIgnoreCase("loop")) {
+                    if (Main.getInstance().getPlayerManager().isLooped(p)) {
                         Main.getInstance().getPlayerManager().unloop(p);
                         p.sendMessage(ChatColor.RED + "MCME music will now not loop.");
-                    }else{
+                    } else {
                         Main.getInstance().getPlayerManager().loop(p);
                         p.sendMessage(ChatColor.GREEN + "MCME music will now loop.");
                     }
                     return true;
-                }
-                else if(args[0].equalsIgnoreCase("play")){
-                    //MusicPlay instanced here b/c it would not work in constructor
+                } else if (args[0].equalsIgnoreCase("play")) {
+                    // MusicPlay instanced here b/c it would not work in constructor
                     MusicPlay musicPlay = new MusicPlay(main);
                     musicPlay.play(p, args);
                     return true;
-                }
-                else if(args[0].equalsIgnoreCase("stop")){
-                    //MusicStop instanced here b/c it would not work in constructor
+                } else if (args[0].equalsIgnoreCase("stop")) {
+                    // MusicStop instanced here b/c it would not work in constructor
                     MusicStop musicStop = new MusicStop(main);
                     musicStop.stop(p);
                     return true;
                 }
 
-                //manager commands
-                if(!p.hasPermission(Permission.MANAGE.getNode())) {
+                // manager commands
+                if (!p.hasPermission(Permission.MANAGE.getNode())) {
                     p.sendMessage("No permission");
                     return true;
                 }
 
-                if(args[0].equalsIgnoreCase("create")){
+                if (args[0].equalsIgnoreCase("create")) {
                     try {
-                        if(args.length == 4) {
+                        if (args.length == 4) {
                             createRegion.regionCreate(p, args[1], Integer.parseInt(args[2]), Integer.parseInt(args[3]));
                             loadRegion.getPolyRegionsMap().clear();
                             loadRegion.getCubeRegionsMap().clear();
                             loadRegion.loadRegions();
                             p.sendMessage(ChatColor.GREEN + "Region Created.");
                             p.sendMessage(ChatColor.GREEN + "Regions have been reloaded");
-                        }else{
+                        } else {
                             p.sendMessage(ChatColor.RED + "Please include a name, id, and weight!");
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                     return true;
-                }
-                else if(args[0].equalsIgnoreCase("reload")){
+                } else if (args[0].equalsIgnoreCase("reload")) {
                     try {
                         loadRegion.getPolyRegionsMap().clear();
                         loadRegion.getCubeRegionsMap().clear();

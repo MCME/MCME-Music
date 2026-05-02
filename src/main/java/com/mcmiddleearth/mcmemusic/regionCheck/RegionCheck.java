@@ -8,12 +8,11 @@ import com.mcmiddleearth.mcmemusic.util.PlayMusic;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Polygonal2DRegion;
+import java.util.*;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
-
-import java.util.*;
 
 public class RegionCheck extends BukkitRunnable {
 
@@ -24,46 +23,46 @@ public class RegionCheck extends BukkitRunnable {
     int serverTime = 0;
     private HashMap<Player, Integer> playerLoopTime = new HashMap<>();
 
-    public RegionCheck(LoadRegion loadRegion, PlayMusic playMusic, Main main){
+    public RegionCheck(LoadRegion loadRegion, PlayMusic playMusic, Main main) {
         this.loadRegion = loadRegion;
         this.playMusic = playMusic;
         this.main = main;
     }
 
-    public Region polyContainCheck(Player p, Polygonal2DRegion region, Region musicRegion){
+    public Region polyContainCheck(Player p, Polygonal2DRegion region, Region musicRegion) {
         int x, z;
         x = p.getLocation().getBlockX();
         z = p.getLocation().getBlockZ();
         BlockVector3 playerVector = BlockVector3.at(x, 0, z);
 
-        if(region.contains(playerVector)) {
+        if (region.contains(playerVector)) {
             return musicRegion;
         } else {
-            if(musicRegion.isListening(p)) {
+            if (musicRegion.isListening(p)) {
                 playMusic.stopMusic(musicRegion, p);
             }
             return null;
         }
     }
 
-    public Region cubeContainCheck(Player p, CuboidRegion region, Region musicRegion){
+    public Region cubeContainCheck(Player p, CuboidRegion region, Region musicRegion) {
         int x, z, y;
         x = p.getLocation().getBlockX();
         y = p.getLocation().getBlockY();
         z = p.getLocation().getBlockZ();
         BlockVector3 playerVector = BlockVector3.at(x, y, z);
 
-        if(region.contains(playerVector)) {
+        if (region.contains(playerVector)) {
             return musicRegion;
         } else {
-            if(musicRegion.isListening(p)) {
+            if (musicRegion.isListening(p)) {
                 playMusic.stopMusic(musicRegion, p);
             }
             return null;
         }
     }
 
-    public void regionPlay(Player p, Region musicRegion, List<Region> otherRegions){
+    public void regionPlay(Player p, Region musicRegion, List<Region> otherRegions) {
 
         int musicID = musicRegion.getMusicID();
         ConfigurationSection path = main.getConfig().getConfigurationSection(String.valueOf(musicID));
@@ -71,50 +70,54 @@ public class RegionCheck extends BukkitRunnable {
 
         ResourceListener.playerRegions.put(p, musicRegion);
 
-        if(!musicRegion.isListening(p)) {
+        if (!musicRegion.isListening(p)) {
             playMusic.playMusic(musicRegion, p);
-            playerLoopTime.put(p, serverTime + (loop/2));
-        }
-        else{
-            try{
-                if(playerLoopTime.get(p).equals(serverTime) && Main.getInstance().getPlayerManager().isLooped(p)){
+            playerLoopTime.put(p, serverTime + (loop / 2));
+        } else {
+            try {
+                if (playerLoopTime.get(p).equals(serverTime)
+                        && Main.getInstance().getPlayerManager().isLooped(p)) {
                     playerLoopTime.remove(p);
                     playMusic.stopMusic(musicRegion, p);
                     playMusic.playMusic(musicRegion, p);
-                    playerLoopTime.put(p, serverTime + (loop/2));
+                    playerLoopTime.put(p, serverTime + (loop / 2));
                 }
-            } catch(NullPointerException e){
-                //Player doesn't need to loop
+            } catch (NullPointerException e) {
+                // Player doesn't need to loop
             }
         }
 
         for (Region region : otherRegions) {
             playMusic.stopMusic(region, p);
         }
-
     }
 
     @Override
     public void run() {
         Bukkit.getOnlinePlayers().stream()
-              .filter(player -> !Main.getInstance().getPlayerManager().isDeafened(player))
-              .forEach(player -> {
+                .filter(player -> !Main.getInstance().getPlayerManager().isDeafened(player))
+                .forEach(player -> {
+                    List<Region> currentRegions = new ArrayList<>();
+                    loadRegion
+                            .getPolyRegionsMap()
+                            .forEach((k, v) -> currentRegions.add(polyContainCheck(player, k, v)));
+                    loadRegion
+                            .getCubeRegionsMap()
+                            .forEach((k, v) -> currentRegions.add(cubeContainCheck(player, k, v)));
+                    currentRegions.removeAll(Collections.singleton(null));
 
-                  List<Region> currentRegions = new ArrayList<>();
-                  loadRegion.getPolyRegionsMap().forEach((k,v) -> currentRegions.add(polyContainCheck(player, k, v)));
-                  loadRegion.getCubeRegionsMap().forEach((k,v) -> currentRegions.add(cubeContainCheck(player, k, v)));
-                  currentRegions.removeAll(Collections.singleton(null));
-
-                  if(!currentRegions.isEmpty()){
-                      try{
-                          Region maxRegion = currentRegions.stream().max(Comparator.comparing(Region::getWeight)).get();
-                          currentRegions.remove(maxRegion);
-                          regionPlay(player, maxRegion, currentRegions);
-                      } catch(NullPointerException e){
-                          //No values
-                      }
-                  }
-        });
+                    if (!currentRegions.isEmpty()) {
+                        try {
+                            Region maxRegion = currentRegions.stream()
+                                    .max(Comparator.comparing(Region::getWeight))
+                                    .get();
+                            currentRegions.remove(maxRegion);
+                            regionPlay(player, maxRegion, currentRegions);
+                        } catch (NullPointerException e) {
+                            // No values
+                        }
+                    }
+                });
 
         serverTime++;
     }
