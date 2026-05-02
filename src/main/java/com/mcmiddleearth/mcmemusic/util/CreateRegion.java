@@ -51,14 +51,14 @@ public class CreateRegion {
 
             if (sel instanceof Polygonal2DRegion) {
                 Polygonal2DRegion polygon = (Polygonal2DRegion) sel;
-                int maxY = polygon.getMaximumPoint().getBlockY();
+                int maxY = polygon.getMaximumPoint().y();
                 shape = "poly";
 
                 List<BlockVector2> points = polygon.getPoints();
 
                 for (BlockVector2 point : points) {
-                    int x = point.getBlockX();
-                    int z = point.getBlockZ();
+                    int x = point.x();
+                    int z = point.z();
                     Location loc = new Location(p.getWorld(), x, maxY, z);
                     String stringLoc = loc.getWorld().getName() + ":" + loc.getBlockX() + ":" + loc.getBlockY() + ":" + loc.getBlockZ();
                     pointLocations.add(stringLoc);
@@ -71,16 +71,16 @@ public class CreateRegion {
                 BlockVector3 pos1 = ((CuboidRegion) sel).getPos1();
                 BlockVector3 pos2 = ((CuboidRegion) sel).getPos2();
 
-                int x1 = pos1.getBlockX();
-                int y1 = pos1.getBlockY();
-                int z1 = pos1.getBlockZ();
+                int x1 = pos1.x();
+                int y1 = pos1.y();
+                int z1 = pos1.z();
 
                 Location loc1 = new Location(p.getWorld(), x1, y1, z1);
                 String stringLoc1 = loc1.getWorld().getName() + ":" + loc1.getBlockX() + ":" + loc1.getBlockY() + ":" + loc1.getBlockZ();
 
-                int x2 = pos2.getBlockX();
-                int y2 = pos2.getBlockY();
-                int z2 = pos2.getBlockZ();
+                int x2 = pos2.x();
+                int y2 = pos2.y();
+                int z2 = pos2.z();
 
                 Location loc2 = new Location(p.getWorld(), x2, y2, z2);
                 String stringLoc2 = loc2.getWorld().getName() + ":" + loc2.getBlockX() + ":" + loc2.getBlockY() + ":" + loc2.getBlockZ();

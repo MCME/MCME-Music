@@ -4,12 +4,8 @@ import com.mcmiddleearth.mcmemusic.Main;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
-
-import java.util.HashMap;
 
 public class MusicPlay {
 
