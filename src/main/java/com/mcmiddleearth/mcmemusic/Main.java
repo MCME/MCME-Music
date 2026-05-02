@@ -28,6 +28,8 @@ import com.mcmiddleearth.mcmemusic.util.CreateRegion;
 import com.mcmiddleearth.mcmemusic.util.LoadRegion;
 import com.mcmiddleearth.mcmemusic.util.PlayMusic;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
+import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import java.util.List;
 import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
@@ -67,7 +69,12 @@ public class Main extends JavaPlugin {
             e.printStackTrace();
         }
 
-        this.getCommand("music").setExecutor(new MusicRegionCommand(createRegion, loadRegion, this));
+        MusicRegionCommand musicCmd = new MusicRegionCommand(createRegion, loadRegion, this);
+        this.getLifecycleManager()
+                .registerEventHandler(
+                        LifecycleEvents.COMMANDS,
+                        event -> event.registrar().register(musicCmd.node(), "Create Music Region", List.of()));
+
         Bukkit.getServer().getPluginManager().registerEvents(new ResourceListener(regionCheck), this);
         Bukkit.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         regionChecker = new RegionCheck(loadRegion, playMusic, this).runTaskTimer(this, 1000, 40);

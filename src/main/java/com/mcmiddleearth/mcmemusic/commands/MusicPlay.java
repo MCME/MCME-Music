@@ -15,12 +15,7 @@ public class MusicPlay {
         this.main = main;
     }
 
-    public void play(Player p, String[] args) {
-
-        if (args.length < 2) {
-            p.sendMessage(ChatColor.RED + "Make sure to include a song name!");
-            return;
-        }
+    public void play(Player p, String songName) {
 
         if (MusicRegionCommand.playerListening.containsKey(p)) {
             int id = MusicRegionCommand.playerListening.get(p);
@@ -37,14 +32,7 @@ public class MusicPlay {
         }
 
         try {
-            StringBuilder sb = new StringBuilder();
-            for (int i = 1; i < args.length; i++) {
-                sb.append(args[i]);
-                sb.append(" ");
-            }
-
-            String command = sb.toString();
-            command = command.substring(0, command.length() - 1);
+            String command = songName;
 
             int id = 0;
 
