@@ -1,6 +1,6 @@
-name: ${project.artifactId}
+name: '${name}'
+version: '${version}'
 main: com.mcmiddleearth.mcmemusic.Main
-version: ${project.version}
 author: Gilan
 api-version: '1.21'
 loadbefore: [JukeBox]
