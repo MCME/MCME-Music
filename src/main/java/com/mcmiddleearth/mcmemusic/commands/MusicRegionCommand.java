@@ -3,6 +3,7 @@ package com.mcmiddleearth.mcmemusic.commands;
 import com.mcmiddleearth.mcmemusic.Main;
 import com.mcmiddleearth.mcmemusic.Permission;
 import com.mcmiddleearth.mcmemusic.util.CreateRegion;
+import com.mcmiddleearth.mcmemusic.util.CreateWGRegion;
 import com.mcmiddleearth.mcmemusic.util.LoadRegion;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -22,13 +23,16 @@ import org.bukkit.entity.Player;
 public class MusicRegionCommand {
 
     private final CreateRegion createRegion;
+    private final CreateWGRegion createWGRegion;
     private final LoadRegion loadRegion;
     private final Main main;
 
     public static HashMap<Player, Integer> playerListening = new HashMap<>();
 
-    public MusicRegionCommand(CreateRegion createRegion, LoadRegion loadRegion, Main main) {
+    public MusicRegionCommand(
+            CreateRegion createRegion, CreateWGRegion createWGRegion, LoadRegion loadRegion, Main main) {
         this.createRegion = createRegion;
+        this.createWGRegion = createWGRegion;
         this.loadRegion = loadRegion;
         this.main = main;
     }
@@ -82,7 +86,7 @@ public class MusicRegionCommand {
                                     String song = StringArgumentType.getString(ctx, "song");
                                     new MusicPlay(main).play(p, song);
                                 }))))
-                .then(Commands.literal("create")
+                .then(Commands.literal("create-rp")
                         .requires(src -> src.getSender().hasPermission(Permission.MANAGE.getNode()))
                         .executes(ctx -> requirePlayer(
                                 ctx,
@@ -112,6 +116,15 @@ public class MusicRegionCommand {
                                                         e.printStackTrace();
                                                     }
                                                 }))))))
+                .then(Commands.literal("create-wg")
+                        .requires(src -> src.getSender().hasPermission(Permission.MANAGE.getNode()))
+                        .executes(ctx -> requirePlayer(
+                                ctx, p -> p.sendMessage(Component.text("Please provide a name!", NamedTextColor.RED))))
+                        .then(Commands.argument("name", StringArgumentType.word())
+                                .executes(ctx -> requirePlayer(ctx, p -> {
+                                    String name = StringArgumentType.getString(ctx, "name");
+                                    createWGRegion.create(p, name);
+                                }))))
                 .then(Commands.literal("reload")
                         .requires(src -> src.getSender().hasPermission(Permission.MANAGE.getNode()))
                         .executes(ctx -> requirePlayer(ctx, p -> {
@@ -134,7 +147,9 @@ public class MusicRegionCommand {
             src.getSender()
                     .sendMessage(Component.text("Command: /music on|off|play <song name>", NamedTextColor.RED)
                             .append(Component.text(" OR ", NamedTextColor.GRAY))
-                            .append(Component.text("/music create <name> <id> <weight>", NamedTextColor.RED)));
+                            .append(Component.text("/music create-rp <name> <id> <weight>", NamedTextColor.RED))
+                            .append(Component.text(" OR ", NamedTextColor.GRAY))
+                            .append(Component.text("/music create-wg <name>", NamedTextColor.RED)));
         } else {
             src.getSender().sendMessage(Component.text("Command: /music on|off|play <song name>", NamedTextColor.RED));
         }

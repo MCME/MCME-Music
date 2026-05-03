@@ -25,6 +25,7 @@ import com.mcmiddleearth.mcmemusic.listener.PlayerListener;
 import com.mcmiddleearth.mcmemusic.listener.ResourceListener;
 import com.mcmiddleearth.mcmemusic.regionCheck.RegionCheck;
 import com.mcmiddleearth.mcmemusic.util.CreateRegion;
+import com.mcmiddleearth.mcmemusic.util.CreateWGRegion;
 import com.mcmiddleearth.mcmemusic.util.LoadRegion;
 import com.mcmiddleearth.mcmemusic.util.PlayMusic;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
@@ -50,6 +51,7 @@ public class Main extends JavaPlugin {
     private final PlayMusic playMusic = new PlayMusic(this);
     private final LoadRegion loadRegion = new LoadRegion(this, jsonFile);
     private final CreateRegion createRegion = new CreateRegion(this, jsonFile);
+    private final CreateWGRegion createWGRegion = new CreateWGRegion(this);
     private final RegionCheck regionCheck = new RegionCheck(loadRegion, playMusic, this);
     private final ResourceListener resourceListener = new ResourceListener(regionCheck);
 
@@ -69,11 +71,9 @@ public class Main extends JavaPlugin {
             e.printStackTrace();
         }
 
-        MusicRegionCommand musicCmd = new MusicRegionCommand(createRegion, loadRegion, this);
-        this.getLifecycleManager()
-                .registerEventHandler(
-                        LifecycleEvents.COMMANDS,
-                        event -> event.registrar().register(musicCmd.node(), "Create Music Region", List.of()));
+        MusicRegionCommand musicCmd = new MusicRegionCommand(createRegion, createWGRegion, loadRegion, this);
+        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> event.registrar()
+                .register(musicCmd.node(), "Create Music Region", List.of()));
 
         Bukkit.getServer().getPluginManager().registerEvents(new ResourceListener(regionCheck), this);
         Bukkit.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
