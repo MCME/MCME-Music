@@ -1,7 +1,8 @@
 package com.mcmiddleearth.mcmemusic.commands;
 
 import com.mcmiddleearth.mcmemusic.Main;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.configuration.ConfigurationSection;
@@ -21,7 +22,7 @@ public class MusicStop {
         try {
             id = MusicRegionCommand.playerListening.get(p);
         } catch (NullPointerException e) {
-            p.sendMessage(ChatColor.RED + "You are not listening to any music!");
+            p.sendMessage(Component.text("You are not listening to any music!", NamedTextColor.RED));
             return;
         }
 
@@ -33,6 +34,6 @@ public class MusicStop {
             p.stopSound(soundFile, SoundCategory.VOICE);
         }
 
-        p.sendMessage(ChatColor.GREEN + "Stopped Music.");
+        p.sendMessage(Component.text("Stopped Music.", NamedTextColor.GREEN));
     }
 }

@@ -5,7 +5,8 @@ import com.mcmiddleearth.mcmemusic.regionCheck.RegionCheck;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,7 +32,7 @@ public class ResourceListener implements Listener {
 
             try {
                 region.removeListeningPlayer(p);
-                p.sendMessage(ChatColor.GREEN + "Refreshing Music...");
+                p.sendMessage(Component.text("Refreshing Music...", NamedTextColor.GREEN));
             } catch (NullPointerException error) {
                 // Player not in Region
             }

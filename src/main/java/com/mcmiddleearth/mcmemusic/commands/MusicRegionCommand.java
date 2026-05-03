@@ -14,7 +14,8 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import java.util.HashMap;
 import java.util.function.Consumer;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
 @SuppressWarnings("UnstableApiUsage")
@@ -51,28 +52,30 @@ public class MusicRegionCommand {
                 .then(Commands.literal("on")
                         .executes(ctx -> requirePlayer(ctx, p -> {
                             Main.getInstance().getPlayerManager().undeafen(p);
-                            p.sendMessage(ChatColor.GREEN + "MCME music enabled.");
+                            p.sendMessage(Component.text("MCME music enabled.", NamedTextColor.GREEN));
                         })))
                 .then(Commands.literal("off")
                         .executes(ctx -> requirePlayer(ctx, p -> {
                             Main.getInstance().getPlayerManager().deafen(p);
-                            p.sendMessage(ChatColor.RED + "MCME music disabled.");
+                            p.sendMessage(Component.text("MCME music disabled.", NamedTextColor.RED));
                         })))
                 .then(Commands.literal("loop")
                         .executes(ctx -> requirePlayer(ctx, p -> {
                             var pm = Main.getInstance().getPlayerManager();
                             if (pm.isLooped(p)) {
                                 pm.unloop(p);
-                                p.sendMessage(ChatColor.RED + "MCME music will now not loop.");
+                                p.sendMessage(Component.text("MCME music will now not loop.", NamedTextColor.RED));
                             } else {
                                 pm.loop(p);
-                                p.sendMessage(ChatColor.GREEN + "MCME music will now loop.");
+                                p.sendMessage(Component.text("MCME music will now loop.", NamedTextColor.GREEN));
                             }
                         })))
                 .then(Commands.literal("stop").executes(ctx -> requirePlayer(ctx, p -> new MusicStop(main).stop(p))))
                 .then(Commands.literal("play")
                         .executes(ctx -> requirePlayer(
-                                ctx, p -> p.sendMessage(ChatColor.RED + "Make sure to include a song name!")))
+                                ctx,
+                                p -> p.sendMessage(
+                                        Component.text("Make sure to include a song name!", NamedTextColor.RED))))
                         .then(Commands.argument("song", StringArgumentType.greedyString())
                                 .suggests(songSuggestions)
                                 .executes(ctx -> requirePlayer(ctx, p -> {
@@ -82,7 +85,9 @@ public class MusicRegionCommand {
                 .then(Commands.literal("create")
                         .requires(src -> src.getSender().hasPermission(Permission.MANAGE.getNode()))
                         .executes(ctx -> requirePlayer(
-                                ctx, p -> p.sendMessage(ChatColor.RED + "Please include a name, id, and weight!")))
+                                ctx,
+                                p -> p.sendMessage(
+                                        Component.text("Please include a name, id, and weight!", NamedTextColor.RED))))
                         .then(Commands.argument("name", StringArgumentType.word())
                                 .then(Commands.argument("id", IntegerArgumentType.integer())
                                         .then(Commands.argument("weight", IntegerArgumentType.integer())
@@ -99,8 +104,10 @@ public class MusicRegionCommand {
                                                                 .getCubeRegionsMap()
                                                                 .clear();
                                                         loadRegion.loadRegions();
-                                                        p.sendMessage(ChatColor.GREEN + "Region Created.");
-                                                        p.sendMessage(ChatColor.GREEN + "Regions have been reloaded");
+                                                        p.sendMessage(Component.text(
+                                                                "Region Created.", NamedTextColor.GREEN));
+                                                        p.sendMessage(Component.text(
+                                                                "Regions have been reloaded", NamedTextColor.GREEN));
                                                     } catch (Exception e) {
                                                         e.printStackTrace();
                                                     }
@@ -113,7 +120,8 @@ public class MusicRegionCommand {
                                 loadRegion.getCubeRegionsMap().clear();
                                 loadRegion.loadRegions();
                                 main.reloadConfig();
-                                p.sendMessage(ChatColor.GREEN + "Regions and Config have been reloaded");
+                                p.sendMessage(
+                                        Component.text("Regions and Config have been reloaded", NamedTextColor.GREEN));
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -124,10 +132,11 @@ public class MusicRegionCommand {
     private int showInfo(CommandSourceStack src) {
         if (src.getSender().hasPermission(Permission.MANAGE.getNode())) {
             src.getSender()
-                    .sendMessage(ChatColor.RED + "Command: /music on|off|play <song name>" + ChatColor.GRAY + " OR "
-                            + ChatColor.RED + "/music create <name> <id> <weight>");
+                    .sendMessage(Component.text("Command: /music on|off|play <song name>", NamedTextColor.RED)
+                            .append(Component.text(" OR ", NamedTextColor.GRAY))
+                            .append(Component.text("/music create <name> <id> <weight>", NamedTextColor.RED)));
         } else {
-            src.getSender().sendMessage(ChatColor.RED + "Command: /music on|off|play <song name>");
+            src.getSender().sendMessage(Component.text("Command: /music on|off|play <song name>", NamedTextColor.RED));
         }
         return Command.SINGLE_SUCCESS;
     }
@@ -137,7 +146,9 @@ public class MusicRegionCommand {
             body.accept(p);
             return Command.SINGLE_SUCCESS;
         }
-        ctx.getSource().getSender().sendMessage(ChatColor.RED + "This command can only be used by a player.");
+        ctx.getSource()
+                .getSender()
+                .sendMessage(Component.text("This command can only be used by a player.", NamedTextColor.RED));
         return 0;
     }
 }

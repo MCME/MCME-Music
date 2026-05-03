@@ -1,7 +1,9 @@
 package com.mcmiddleearth.mcmemusic.commands;
 
 import com.mcmiddleearth.mcmemusic.Main;
-import org.bukkit.ChatColor;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.configuration.ConfigurationSection;
@@ -28,7 +30,7 @@ public class MusicPlay {
                 p.stopSound(soundFile, SoundCategory.VOICE);
             }
 
-            p.sendMessage(ChatColor.GREEN + "Stopped Music.");
+            p.sendMessage(Component.text("Stopped Music.", NamedTextColor.GREEN));
         }
 
         try {
@@ -43,7 +45,7 @@ public class MusicPlay {
             }
 
             if (id == 0) {
-                p.sendMessage(ChatColor.RED + "That song doesn't exist");
+                p.sendMessage(Component.text("That song doesn't exist", NamedTextColor.RED));
                 return;
             }
 
@@ -65,14 +67,18 @@ public class MusicPlay {
                 p.playSound(p.getLocation(), soundFile, SoundCategory.VOICE, 1, 1);
             }
 
-            p.sendMessage(ChatColor.GREEN + "Playing " + ChatColor.ITALIC + name + ChatColor.RESET + ChatColor.GREEN
-                    + " by " + ChatColor.ITALIC + composer + ChatColor.RESET + ChatColor.GREEN + " [" + ChatColor.GRAY
-                    + link + ChatColor.GREEN + "]");
+            p.sendMessage(Component.text("Playing ", NamedTextColor.GREEN)
+                    .append(Component.text(name, NamedTextColor.GREEN).decorate(TextDecoration.ITALIC))
+                    .append(Component.text(" by ", NamedTextColor.GREEN))
+                    .append(Component.text(composer, NamedTextColor.GREEN).decorate(TextDecoration.ITALIC))
+                    .append(Component.text(" [", NamedTextColor.GREEN))
+                    .append(Component.text(link, NamedTextColor.GRAY))
+                    .append(Component.text("]", NamedTextColor.GREEN)));
 
             MusicRegionCommand.playerListening.put(p, id);
 
         } catch (NullPointerException e) {
-            p.sendMessage(ChatColor.RED + "That song doesn't exist!");
+            p.sendMessage(Component.text("That song doesn't exist!", NamedTextColor.RED));
         }
     }
 }
