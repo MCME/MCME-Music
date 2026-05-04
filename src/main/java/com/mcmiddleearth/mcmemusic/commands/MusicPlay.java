@@ -1,6 +1,14 @@
 package com.mcmiddleearth.mcmemusic.commands;
 
 import com.mcmiddleearth.mcmemusic.Main;
+import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import com.mojang.brigadier.suggestion.Suggestions;
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+import com.mojang.brigadier.tree.LiteralCommandNode;
+import io.papermc.paper.command.brigadier.CommandSourceStack;
+import io.papermc.paper.command.brigadier.Commands;
+import java.util.concurrent.CompletableFuture;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -11,16 +19,40 @@ import org.bukkit.entity.Player;
 
 public class MusicPlay {
 
-    private Main main;
+    private final Main main;
 
     public MusicPlay(Main main) {
         this.main = main;
     }
 
-    public void play(Player p, String songName) {
+    public LiteralCommandNode<CommandSourceStack> node() {
+        return Commands.literal("play")
+                .executes(ctx -> CommandUtil.requirePlayer(
+                        ctx,
+                        p -> p.sendMessage(Component.text("Make sure to include a song name!", NamedTextColor.RED))))
+                .then(Commands.argument("song", StringArgumentType.greedyString())
+                        .suggests(this::suggestSongs)
+                        .executes(ctx -> CommandUtil.requirePlayer(
+                                ctx, p -> play(p, StringArgumentType.getString(ctx, "song")))))
+                .build();
+    }
 
-        if (MusicRegionCommand.playerListening.containsKey(p)) {
-            int id = MusicRegionCommand.playerListening.get(p);
+    private CompletableFuture<Suggestions> suggestSongs(
+            CommandContext<CommandSourceStack> ctx, SuggestionsBuilder builder) {
+        String remaining = builder.getRemainingLowerCase();
+        for (String key : main.getConfig().getKeys(false)) {
+            String name = main.getConfig().getString(key + ".name");
+            if (name != null && name.toLowerCase().startsWith(remaining)) {
+                builder.suggest(name);
+            }
+        }
+        return builder.buildFuture();
+    }
+
+    private void play(Player p, String songName) {
+
+        if (MusicCommand.playerListening.containsKey(p)) {
+            int id = MusicCommand.playerListening.get(p);
 
             ConfigurationSection path = main.getConfig().getConfigurationSection(String.valueOf(id));
             String soundFile = path.getString("file");
@@ -75,7 +107,7 @@ public class MusicPlay {
                     .append(Component.text(link, NamedTextColor.GRAY))
                     .append(Component.text("]", NamedTextColor.GREEN)));
 
-            MusicRegionCommand.playerListening.put(p, id);
+            MusicCommand.playerListening.put(p, id);
 
         } catch (NullPointerException e) {
             p.sendMessage(Component.text("That song doesn't exist!", NamedTextColor.RED));

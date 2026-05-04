@@ -16,8 +16,8 @@
  */
 package com.mcmiddleearth.mcmemusic;
 
+import com.mcmiddleearth.mcmemusic.commands.MusicCommand;
 import com.mcmiddleearth.mcmemusic.commands.MusicPlay;
-import com.mcmiddleearth.mcmemusic.commands.MusicRegionCommand;
 import com.mcmiddleearth.mcmemusic.commands.MusicStop;
 import com.mcmiddleearth.mcmemusic.data.PlayerManager;
 import com.mcmiddleearth.mcmemusic.file.JSONFile;
@@ -71,9 +71,9 @@ public class Main extends JavaPlugin {
             e.printStackTrace();
         }
 
-        MusicRegionCommand musicCmd = new MusicRegionCommand(createRegion, createWGRegion, loadRegion, this);
+        MusicCommand musicCmd = new MusicCommand(createRegion, createWGRegion, loadRegion, this);
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> event.registrar()
-                .register(musicCmd.node(), "Create Music Region", List.of()));
+                .register(musicCmd.node(), "Music command", List.of()));
 
         Bukkit.getServer().getPluginManager().registerEvents(new ResourceListener(regionCheck), this);
         Bukkit.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
