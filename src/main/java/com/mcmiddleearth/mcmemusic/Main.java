@@ -25,7 +25,6 @@ import com.mcmiddleearth.mcmemusic.listener.PlayerListener;
 import com.mcmiddleearth.mcmemusic.listener.ResourceListener;
 import com.mcmiddleearth.mcmemusic.regionCheck.RegionCheck;
 import com.mcmiddleearth.mcmemusic.util.CreateRegion;
-import com.mcmiddleearth.mcmemusic.util.CreateWGRegion;
 import com.mcmiddleearth.mcmemusic.util.LoadRegion;
 import com.mcmiddleearth.mcmemusic.util.PlayMusic;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
@@ -48,7 +47,6 @@ public class Main extends JavaPlugin {
     private final PlayMusic playMusic = new PlayMusic(this);
     private final LoadRegion loadRegion = new LoadRegion(this, jsonFile);
     private final CreateRegion createRegion = new CreateRegion(this, jsonFile);
-    private final CreateWGRegion createWGRegion = new CreateWGRegion(this);
     private final RegionCheck regionCheck = new RegionCheck(loadRegion, playMusic, this);
     private final ResourceListener resourceListener = new ResourceListener(regionCheck);
 
@@ -68,7 +66,7 @@ public class Main extends JavaPlugin {
             e.printStackTrace();
         }
 
-        MusicCommand musicCmd = new MusicCommand(createRegion, createWGRegion, loadRegion, this);
+        MusicCommand musicCmd = new MusicCommand(createRegion, loadRegion, this);
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> event.registrar()
                 .register(musicCmd.node(), "Music command", List.of()));
 

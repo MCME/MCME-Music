@@ -3,7 +3,6 @@ package com.mcmiddleearth.mcmemusic.commands;
 import com.mcmiddleearth.mcmemusic.Main;
 import com.mcmiddleearth.mcmemusic.Permission;
 import com.mcmiddleearth.mcmemusic.util.CreateRegion;
-import com.mcmiddleearth.mcmemusic.util.CreateWGRegion;
 import com.mcmiddleearth.mcmemusic.util.LoadRegion;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.tree.LiteralCommandNode;
@@ -17,15 +16,13 @@ import org.bukkit.entity.Player;
 public class MusicCommand {
 
     private final CreateRegion createRegion;
-    private final CreateWGRegion createWGRegion;
     private final LoadRegion loadRegion;
     private final Main main;
 
     public static HashMap<Player, Integer> playerListening = new HashMap<>();
 
-    public MusicCommand(CreateRegion createRegion, CreateWGRegion createWGRegion, LoadRegion loadRegion, Main main) {
+    public MusicCommand(CreateRegion createRegion, LoadRegion loadRegion, Main main) {
         this.createRegion = createRegion;
-        this.createWGRegion = createWGRegion;
         this.loadRegion = loadRegion;
         this.main = main;
     }
@@ -52,7 +49,7 @@ public class MusicCommand {
                 .then(new MusicPlay(main).node())
                 .then(new MusicStop(main).node())
                 .then(new MusicCreateRP(createRegion, loadRegion).node())
-                .then(new MusicCreateWG(createWGRegion).node())
+                .then(new MusicCreateWG().node())
                 .build();
     }
 
