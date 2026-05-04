@@ -1,8 +1,6 @@
 package com.mcmiddleearth.mcmemusic.util;
 
 import com.mcmiddleearth.mcmemusic.Main;
-import com.sk89q.worldedit.IncompleteRegionException;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Polygonal2DRegion;
 import com.sk89q.worldedit.regions.Region;
@@ -14,6 +12,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedPolygonalRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.sk89q.worldguard.protection.regions.RegionContainer;
+import java.util.Optional;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -27,13 +26,9 @@ public class CreateWGRegion {
     }
 
     public void create(Player p, String name) {
-        Region sel;
-        try {
-            sel = Main.getWorldEdit().getSession(p).getSelection(BukkitAdapter.adapt(p.getWorld()));
-        } catch (IncompleteRegionException e) {
-            p.sendMessage(Component.text("Make a WorldEdit selection first.", NamedTextColor.RED));
-            return;
-        }
+        Optional<Region> maybeSel = WorldEditSelections.get(p);
+        if (maybeSel.isEmpty()) return;
+        Region sel = maybeSel.get();
 
         ProtectedRegion region;
         if (sel instanceof CuboidRegion cube) {
@@ -52,7 +47,7 @@ public class CreateWGRegion {
         region.setFlag(Flags.BUILD, StateFlag.State.ALLOW);
 
         RegionContainer container = WorldGuard.getInstance().getPlatform().getRegionContainer();
-        RegionManager rm = container.get(BukkitAdapter.adapt(p.getWorld()));
+        RegionManager rm = container.get(sel.getWorld());
         if (rm == null) {
             p.sendMessage(Component.text("WorldGuard has no region manager for this world.", NamedTextColor.RED));
             return;
