@@ -1,6 +1,7 @@
 package com.mcmiddleearth.mcmemusic.commands;
 
 import com.mcmiddleearth.mcmemusic.Permission;
+import com.mcmiddleearth.mcmemusic.util.SelectionProximity;
 import com.mcmiddleearth.mcmemusic.util.WorldEditSelections;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
@@ -19,6 +20,7 @@ import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
 import java.util.Optional;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
@@ -31,14 +33,30 @@ public final class MusicCreateWG {
                         ctx, p -> p.sendMessage(Component.text("Please provide a name!", NamedTextColor.RED))))
                 .then(Commands.argument("name", StringArgumentType.word())
                         .executes(ctx -> CommandUtil.requirePlayer(
-                                ctx, p -> create(p, StringArgumentType.getString(ctx, "name")))))
+                                ctx, p -> create(p, StringArgumentType.getString(ctx, "name"), false, ctx.getInput())))
+                        .then(Commands.literal("--ignore-proximity")
+                                .executes(ctx -> CommandUtil.requirePlayer(
+                                        ctx,
+                                        p -> create(
+                                                p, StringArgumentType.getString(ctx, "name"), true, ctx.getInput())))))
                 .build();
     }
 
-    private void create(Player p, String name) {
+    private void create(Player p, String name, boolean ignoreProximity, String input) {
         Optional<Region> maybeSel = WorldEditSelections.get(p);
         if (maybeSel.isEmpty()) return;
         Region sel = maybeSel.get();
+
+        if (!ignoreProximity) {
+            SelectionProximity.Result proximity = SelectionProximity.check(p, sel);
+            if (!proximity.isOk()) {
+                p.sendMessage(SelectionProximity.describe(proximity)
+                        .append(Component.text(" "))
+                        .append(Component.text("[Use anyway]", NamedTextColor.YELLOW)
+                                .clickEvent(ClickEvent.suggestCommand("/" + input + " --ignore-proximity"))));
+                return;
+            }
+        }
 
         ProtectedRegion region;
         if (sel instanceof CuboidRegion cube) {

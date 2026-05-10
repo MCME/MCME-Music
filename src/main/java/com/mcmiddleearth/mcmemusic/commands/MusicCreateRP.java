@@ -3,12 +3,17 @@ package com.mcmiddleearth.mcmemusic.commands;
 import com.mcmiddleearth.mcmemusic.Permission;
 import com.mcmiddleearth.mcmemusic.util.CreateRegion;
 import com.mcmiddleearth.mcmemusic.util.LoadRegion;
+import com.mcmiddleearth.mcmemusic.util.SelectionProximity;
+import com.mcmiddleearth.mcmemusic.util.WorldEditSelections;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.tree.LiteralCommandNode;
+import com.sk89q.worldedit.regions.Region;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import java.util.Optional;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
@@ -38,11 +43,37 @@ public final class MusicCreateRP {
                                                         p,
                                                         StringArgumentType.getString(ctx, "name"),
                                                         IntegerArgumentType.getInteger(ctx, "id"),
-                                                        IntegerArgumentType.getInteger(ctx, "weight")))))))
+                                                        IntegerArgumentType.getInteger(ctx, "weight"),
+                                                        false,
+                                                        ctx.getInput())))
+                                        .then(Commands.literal("--ignore-proximity")
+                                                .executes(ctx -> CommandUtil.requirePlayer(
+                                                        ctx,
+                                                        p -> create(
+                                                                p,
+                                                                StringArgumentType.getString(ctx, "name"),
+                                                                IntegerArgumentType.getInteger(ctx, "id"),
+                                                                IntegerArgumentType.getInteger(ctx, "weight"),
+                                                                true,
+                                                                ctx.getInput())))))))
                 .build();
     }
 
-    private void create(Player p, String name, int id, int weight) {
+    private void create(Player p, String name, int id, int weight, boolean ignoreProximity, String input) {
+        if (!ignoreProximity) {
+            Optional<Region> maybeSel = WorldEditSelections.get(p);
+            if (maybeSel.isEmpty()) return;
+
+            SelectionProximity.Result proximity = SelectionProximity.check(p, maybeSel.get());
+            if (!proximity.isOk()) {
+                p.sendMessage(SelectionProximity.describe(proximity)
+                        .append(Component.text(" "))
+                        .append(Component.text("[Use anyway]", NamedTextColor.YELLOW)
+                                .clickEvent(ClickEvent.suggestCommand("/" + input + " --ignore-proximity"))));
+                return;
+            }
+        }
+
         try {
             createRegion.regionCreate(p, name, id, weight);
             loadRegion.loadRegions();
