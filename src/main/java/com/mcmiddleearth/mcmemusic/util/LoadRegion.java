@@ -13,16 +13,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 public class LoadRegion {
 
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final Main main;
     private final JSONFile jsonFile;
-    private final Logger log = Bukkit.getLogger();
     private final HashMap<Polygonal2DRegion, Region> polyRegions = new HashMap<>();
     private final HashMap<CuboidRegion, Region> cubeRegions = new HashMap<>();
 
@@ -32,6 +29,9 @@ public class LoadRegion {
     }
 
     public void loadRegions() throws Exception {
+        polyRegions.clear();
+        cubeRegions.clear();
+
         File dataFolder = new File(String.valueOf(main.getDataFolder()));
         File[] files = dataFolder.listFiles();
 

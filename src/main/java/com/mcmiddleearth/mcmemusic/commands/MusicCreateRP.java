@@ -45,8 +45,6 @@ public final class MusicCreateRP {
     private void create(Player p, String name, int id, int weight) {
         try {
             createRegion.regionCreate(p, name, id, weight);
-            loadRegion.getPolyRegionsMap().clear();
-            loadRegion.getCubeRegionsMap().clear();
             loadRegion.loadRegions();
             p.sendMessage(Component.text("Region Created.", NamedTextColor.GREEN));
             p.sendMessage(Component.text("Regions have been reloaded", NamedTextColor.GREEN));

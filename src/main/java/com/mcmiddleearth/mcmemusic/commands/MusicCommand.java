@@ -76,8 +76,6 @@ public class MusicCommand {
 
     private void onReload(Player p) {
         try {
-            loadRegion.getPolyRegionsMap().clear();
-            loadRegion.getCubeRegionsMap().clear();
             loadRegion.loadRegions();
             main.reloadConfig();
             p.sendMessage(Component.text("Regions and Config have been reloaded", NamedTextColor.GREEN));
