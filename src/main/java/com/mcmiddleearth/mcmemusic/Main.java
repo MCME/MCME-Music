@@ -17,8 +17,6 @@
 package com.mcmiddleearth.mcmemusic;
 
 import com.mcmiddleearth.mcmemusic.commands.MusicCommand;
-import com.mcmiddleearth.mcmemusic.commands.MusicPlay;
-import com.mcmiddleearth.mcmemusic.commands.MusicStop;
 import com.mcmiddleearth.mcmemusic.data.PlayerManager;
 import com.mcmiddleearth.mcmemusic.file.JSONFile;
 import com.mcmiddleearth.mcmemusic.listener.PlayerListener;
@@ -29,18 +27,13 @@ import com.mcmiddleearth.mcmemusic.util.LoadRegion;
 import com.mcmiddleearth.mcmemusic.util.PlayMusic;
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
 import java.util.List;
-import java.util.logging.Logger;
-import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 public class Main extends JavaPlugin {
 
     public static Main instance;
-    private Logger log;
 
-    private MusicPlay musicPlay;
-    private MusicStop musicStop;
     private PlayerManager playerManager;
     private BukkitTask regionChecker;
     private final JSONFile jsonFile = new JSONFile(this);
@@ -48,15 +41,12 @@ public class Main extends JavaPlugin {
     private final LoadRegion loadRegion = new LoadRegion(this, jsonFile);
     private final CreateRegion createRegion = new CreateRegion(this, jsonFile);
     private final RegionCheck regionCheck = new RegionCheck(loadRegion, playMusic, this);
-    private final ResourceListener resourceListener = new ResourceListener(regionCheck);
 
     @Override
     public void onEnable() {
         instance = this;
         this.saveDefaultConfig();
         this.getConfig().options().copyDefaults(true);
-
-        log = getLogger();
 
         playerManager = new PlayerManager();
 
@@ -70,9 +60,9 @@ public class Main extends JavaPlugin {
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, event -> event.registrar()
                 .register(musicCmd.node(), "Music command", List.of()));
 
-        Bukkit.getServer().getPluginManager().registerEvents(new ResourceListener(regionCheck), this);
-        Bukkit.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
-        regionChecker = new RegionCheck(loadRegion, playMusic, this).runTaskTimer(this, 1000, 40);
+        getServer().getPluginManager().registerEvents(new ResourceListener(), this);
+        getServer().getPluginManager().registerEvents(new PlayerListener(), this);
+        regionChecker = regionCheck.runTaskTimer(this, 1000, 40);
     }
 
     @Override

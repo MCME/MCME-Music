@@ -1,7 +1,6 @@
 package com.mcmiddleearth.mcmemusic.listener;
 
 import com.mcmiddleearth.mcmemusic.data.Region;
-import com.mcmiddleearth.mcmemusic.regionCheck.RegionCheck;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,16 +13,11 @@ import org.bukkit.event.player.PlayerResourcePackStatusEvent;
 
 public class ResourceListener implements Listener {
 
-    private final RegionCheck regionCheck;
     public static List<Player> resourceList = new ArrayList<>();
     public static HashMap<Player, Region> playerRegions = new HashMap<>();
 
-    public ResourceListener(RegionCheck regionCheck) {
-        this.regionCheck = regionCheck;
-    }
-
     @EventHandler
-    public void onResourcepackStatusEvent(PlayerResourcePackStatusEvent e) {
+    public void onResourcePackStatusEvent(PlayerResourcePackStatusEvent e) {
         if (e.getStatus() == PlayerResourcePackStatusEvent.Status.SUCCESSFULLY_LOADED) {
             Player p = e.getPlayer();
             resourceList.add(p);
