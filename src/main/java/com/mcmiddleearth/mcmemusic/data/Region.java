@@ -1,10 +1,9 @@
 package com.mcmiddleearth.mcmemusic.data;
 
-import org.bukkit.entity.Player;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import org.bukkit.entity.Player;
 
 public class Region {
 
@@ -16,7 +15,7 @@ public class Region {
 
     private final Set<Player> listeningPlayers = new HashSet<>();
 
-    public Region(String name, List<String> points, int musicID, int weight, String shape){
+    public Region(String name, List<String> points, int musicID, int weight, String shape) {
         super();
         this.name = name;
         this.points = points;
@@ -25,23 +24,23 @@ public class Region {
         this.shape = shape;
     }
 
-    public String getName(){
+    public String getName() {
         return name;
     }
 
-    public List<String> getPoints(){
+    public List<String> getPoints() {
         return points;
     }
 
-    public int getMusicID(){
+    public int getMusicID() {
         return musicID;
     }
 
-    public int getWeight(){
+    public int getWeight() {
         return weight;
     }
 
-    public String getShape(){
+    public String getShape() {
         return shape;
     }
 
@@ -57,4 +56,3 @@ public class Region {
         listeningPlayers.remove(player);
     }
 }
-

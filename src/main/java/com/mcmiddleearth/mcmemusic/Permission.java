@@ -1,8 +1,8 @@
 package com.mcmiddleearth.mcmemusic;
 
 public enum Permission {
-    MANAGE ("mcmemusic.manage"),
-    LISTEN ("mcmemusic.listen");
+    MANAGE("mcmemusic.manage"),
+    LISTEN("mcmemusic.listen");
 
     private final String node;
 

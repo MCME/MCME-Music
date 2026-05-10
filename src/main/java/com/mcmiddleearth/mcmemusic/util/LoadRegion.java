@@ -2,79 +2,77 @@ package com.mcmiddleearth.mcmemusic.util;
 
 import com.google.gson.*;
 import com.mcmiddleearth.mcmemusic.Main;
-import com.mcmiddleearth.mcmemusic.file.JSONFile;
 import com.mcmiddleearth.mcmemusic.data.Region;
+import com.mcmiddleearth.mcmemusic.file.JSONFile;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector2;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Polygonal2DRegion;
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.logging.Logger;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 
 public class LoadRegion {
 
-    Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private final Main main;
     private final JSONFile jsonFile;
-    private final Logger log = Bukkit.getLogger();
     private final HashMap<Polygonal2DRegion, Region> polyRegions = new HashMap<>();
     private final HashMap<CuboidRegion, Region> cubeRegions = new HashMap<>();
 
-    public LoadRegion(Main main, JSONFile jsonFile){
+    public LoadRegion(Main main, JSONFile jsonFile) {
         this.main = main;
         this.jsonFile = jsonFile;
     }
 
     public void loadRegions() throws Exception {
+        polyRegions.clear();
+        cubeRegions.clear();
+
         File dataFolder = new File(String.valueOf(main.getDataFolder()));
         File[] files = dataFolder.listFiles();
 
-        for(File f: files) {
-                JsonObject json;
-                try{
-                    json = (JsonObject) jsonFile.readJson(f.getName());
-                }catch(com.google.gson.JsonSyntaxException | java.lang.ClassCastException e){
-                    continue;
+        for (File f : files) {
+            JsonObject json;
+            try {
+                json = (JsonObject) jsonFile.readJson(f.getName());
+            } catch (com.google.gson.JsonSyntaxException | java.lang.ClassCastException e) {
+                continue;
+            }
+            ArrayList<String> pointList = new ArrayList<>();
+            JsonPrimitive jsonID = json.getAsJsonPrimitive("musicID");
+            String name = json.get("name").getAsString();
+            String shape;
+
+            try {
+                shape = json.get("shape").getAsString();
+            } catch (NullPointerException e) {
+                shape = "poly";
+            }
+
+            int musicID = jsonID.getAsInt();
+            int weight = jsonID.getAsInt();
+
+            JsonArray points = json.getAsJsonArray("points");
+            if (points != null) {
+                for (int i = 0; i < points.size(); i++) {
+                    pointList.add(String.valueOf(points.get(i)));
                 }
-                ArrayList<String> pointList = new ArrayList<>();
-                JsonPrimitive jsonID = json.getAsJsonPrimitive("musicID");
-                String name = json.get("name").getAsString();
-                String shape;
+            }
 
-                try {
-                    shape = json.get("shape").getAsString();
-                } catch (NullPointerException e) {
-                    shape = "poly";
-                }
+            if (shape.contains("poly")) {
+                polyLoad(name, pointList, musicID, weight, shape);
 
-                int musicID = jsonID.getAsInt();
-                int weight = jsonID.getAsInt();
-
-                JsonArray points = json.getAsJsonArray("points");
-                if (points != null) {
-                    for (int i = 0; i < points.size(); i++) {
-                        pointList.add(String.valueOf(points.get(i)));
-                    }
-                }
-
-                if (shape.contains("poly")) {
-                    polyLoad(name, pointList, musicID, weight, shape);
-
-                } else if (shape.contains("cube")) {
-                    cubeLoad(name, pointList, musicID, weight, shape);
-
-                }
+            } else if (shape.contains("cube")) {
+                cubeLoad(name, pointList, musicID, weight, shape);
+            }
         }
     }
 
-    public void polyLoad(String name, ArrayList<String> pointList, int musicID, int weight, String shape){
+    public void polyLoad(String name, ArrayList<String> pointList, int musicID, int weight, String shape) {
         Polygonal2DRegion region = new Polygonal2DRegion();
 
         for (String s : pointList) {
@@ -97,7 +95,7 @@ public class LoadRegion {
         polyRegions.put(region, new Region(name, pointList, musicID, weight, shape));
     }
 
-    public void cubeLoad(String name, ArrayList<String> pointList, int musicID, int weight, String shape){
+    public void cubeLoad(String name, ArrayList<String> pointList, int musicID, int weight, String shape) {
         List<BlockVector3> positions = new ArrayList<>();
         String world = null;
 
@@ -126,11 +124,11 @@ public class LoadRegion {
         cubeRegions.put(region, new Region(name, pointList, musicID, weight, shape));
     }
 
-    public HashMap<Polygonal2DRegion, Region> getPolyRegionsMap(){
+    public HashMap<Polygonal2DRegion, Region> getPolyRegionsMap() {
         return polyRegions;
     }
-    public HashMap<CuboidRegion, Region> getCubeRegionsMap(){
+
+    public HashMap<CuboidRegion, Region> getCubeRegionsMap() {
         return cubeRegions;
     }
-
 }

@@ -1,20 +1,6 @@
-name: ${project.artifactId}
+name: '${name}'
+version: '${version}'
 main: com.mcmiddleearth.mcmemusic.Main
-version: ${project.version}
 author: Gilan
-api-version: 1.16
-loadbefore: [JukeBox]
-depend: [WorldEdit]
-
-commands:
-  music:
-    description: Create Music Region
-    usage: /music create|on|off
-
-permissions:
-  mcmemusic.manage:
-    default: op
-    children:
-      mcmemusic.listen: true
-  mcmemusic.listen:
-    default: op
+api-version: '1.21'
+depend: [ WorldEdit, WorldGuard ]
